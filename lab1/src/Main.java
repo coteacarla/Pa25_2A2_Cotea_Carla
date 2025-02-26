@@ -1,7 +1,18 @@
 public class Main {
 
     public static void main(String[] args) {
-        homework(5, 1);
+        int n = Integer.parseInt(args[0]);
+        int k = Integer.parseInt(args[1]);
+        int[] sol = new int[n];
+        //homework(n, k);
+        a = new int[][]{
+                {1, 1, 1, 0, 0},
+                {1, 0, 1, 1, 0},
+                {1, 1, 0, 1, 1},
+                {0, 1, 1, 0, 1},
+                {0, 0, 1, 1, 1}
+        };
+        bonus(a.length, 3);
     }
 
     public static void compulsory() {
@@ -12,19 +23,15 @@ public class Main {
         r = r + 0b10101;
         r = r + 0xFF;
         r = r * 6;
-        while (r > 9) {
-            int suma = 0;
-            while (r > 0) {
-                suma = suma + r % 10;
-                r = r / 10;
-            }
-            r = suma;
-
+        r = r % 9;
+        if (r == 0) {
+            r = 9;
         }
         System.out.println("Willy-nilly, this semester I will learn " + languages[r]);
     }
 
     public static void homework(int n, int k) {
+        long startTime = System.nanoTime();
         String[][] matrix = new String[n + 1][n + 1];
         for (int i = 0; i < n; i++)
             for (int j = 0; j < n; j++)
@@ -34,25 +41,22 @@ public class Main {
             System.out.println("Nu este posibil");
         } else {
             System.out.println("Este posibil");
+            int grade = 0;
+            int m = 0;
+            for (int i = 0; i < k; i = i + 2) {
+                for (int j = 0; j < k; j++) {
+                    if (i != j) {
+                        matrix[i][j] = matrix[j][i] = "1";
+                        grade = grade + 2;
+                        m++;
+                    }
+                }
 
-            for (int i = 0; i < n; i = i + 2)
-            {
-                matrix[i][i + 1] = matrix[i + 1][i] = "1";
-                suma=suma+2;
             }
 
-            int m = n / 2;
-            int gradmin, gradmax;
-            if (n % 2 == 0) {
-                gradmin = 1;
-                gradmax = 1;
-            } else {
-                gradmin = 0;
-                gradmax = 1;
-            }
             System.out.println("Numarul de muchii este " + m);
-            System.out.println("Δ(G)=" + gradmin);
-            System.out.println("δ(G)=" + gradmax);
+            System.out.println("Δ(G)=" + "0");
+            System.out.println("δ(G)=" + k);
 
             if (n < 30_000) {
                 for (int i = 0; i < n; i++) {
@@ -62,12 +66,70 @@ public class Main {
                     }
                     System.out.println(line);
                 }
+            } else {
+                long endTime = System.nanoTime();
+                long duration = endTime - startTime;
+                System.out.println("Running time (nanoseconds): " + duration);
+                System.out.println("Running time (miliseconds): " + (duration / 1000000));
             }
-            else {
 
-            }
+        }
+    }
+
+    static int[] candidates, viz, rezultat;
+    static int[][] a;
+    static int csize = 0, rezultatSize = 0;
+
+    public static void bonus(int n, int k) {
+        candidates = new int[n];
+        viz = new int[n];
+        rezultat = new int[k];
+
+        for (int i = 0; i < n; i++) {
+            int egrad = 0;
+            for (int j = 0; j < n; j++)
+                if (a[i][j] == 1)
+                    egrad++;
+
+            if (egrad >= k - 1)
+                candidates[csize++] = i;
+        }
+
+        for (int i = 0; i < csize; i++)
+        {
+            for (int j = 0; j < n; j++)
+                viz[j] = 0;
+            rezultatSize = 0;
+            bkt(i, k);
+        }
+    }
+
+    public static void bkt(int idx, int k) {
+        viz[idx] = 1;
+        rezultat[rezultatSize++] = candidates[idx];
+
+        if (rezultatSize == k) {
+            System.out.println("Exista clica");
+            for (int i = 0; i < k; i++)
+                System.out.print(rezultat[i] + " ");
+            System.out.println();
+            return;
+        }
+
+        for (int i = idx + 1; i < csize; i++) {
+            if (viz[i] == 0) {
+                boolean ok = true;
+                for (int j = 0; j < rezultatSize; j++)
+                    if (a[rezultat[j]][candidates[i]] == 0 || a[candidates[i]][rezultat[j]] == 0) {
+                        ok = false;
+                        break;
+                    }
+                if (ok) {
+                    bkt(i, k);
+                    viz[i] = 0;
+                    rezultatSize--;
+                }
             }
         }
     }
 }
-
