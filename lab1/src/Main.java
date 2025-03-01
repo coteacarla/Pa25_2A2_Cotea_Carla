@@ -6,11 +6,11 @@ public class Main {
         int[] sol = new int[n];
         //homework(n, k);
         a = new int[][]{
-                {1, 1, 1, 0, 0},
+                {0, 1, 0, 1, 1},
                 {1, 0, 1, 1, 0},
-                {1, 1, 0, 1, 1},
-                {0, 1, 1, 0, 1},
-                {0, 0, 1, 1, 1}
+                {0, 1, 0, 1, 1},
+                {1, 1, 1, 0, 1},
+                {1, 0, 1, 1, 0}
         };
         bonus(a.length, 3);
     }
@@ -79,6 +79,7 @@ public class Main {
     static int[] candidates, viz, rezultat;
     static int[][] a;
     static int csize = 0, rezultatSize = 0;
+    static int gasit = 0;
 
     public static void bonus(int n, int k) {
         candidates = new int[n];
@@ -100,7 +101,7 @@ public class Main {
             for (int j = 0; j < n; j++)
                 viz[j] = 0;
             rezultatSize = 0;
-            bkt(i, k);
+            bkt(candidates[i], k);
         }
     }
 
@@ -108,11 +109,12 @@ public class Main {
         viz[idx] = 1;
         rezultat[rezultatSize++] = candidates[idx];
 
-        if (rezultatSize == k) {
+        if (rezultatSize == k && gasit==0) {
             System.out.println("Exista clica");
             for (int i = 0; i < k; i++)
                 System.out.print(rezultat[i] + " ");
             System.out.println();
+            gasit=1;
             return;
         }
 
