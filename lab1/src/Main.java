@@ -57,7 +57,7 @@ public class Main {
 
             System.out.println("Numarul de muchii este " + m);
             System.out.println("Δ(G)=" + "0");
-            System.out.println("δ(G)=" + k);
+            System.out.println("δ(G)=" + (k-1));
 
             if (n < 30_000) {
                 for (int i = 0; i < n; i++) {
