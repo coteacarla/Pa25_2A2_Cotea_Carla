@@ -13,6 +13,7 @@ public class Main {
                 {1, 0, 1, 1, 0}
         };
         bonus(a.length, 3);
+        //pentru independent set rulez clica si apoi elimin nodurile gasite din multimea de noduri si rulez din nou
     }
 
     public static void compulsory() {
