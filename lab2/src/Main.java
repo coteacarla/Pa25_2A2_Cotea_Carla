@@ -1,5 +1,4 @@
 import java.time.LocalDate;
-import java.util.Arrays;
 
 abstract class Person {
     protected String name;
@@ -24,30 +23,6 @@ abstract class Person {
         return name + "\t" + birthdate;
     }
 }
-
-class Student extends Person {
-    private Long regNumber;
-
-    public Student(String name, LocalDate birthdate, Long regNumber) {
-        this.name=name;
-        this.birthdate=birthdate;
-        this.regNumber = regNumber;
-    }
-
-    public Long getRegNumber() {
-        return regNumber;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null ||  !(obj instanceof Student))
-            return false;
-        Student student = (Student) obj;
-        return regNumber.equals(student.regNumber);
-    }
-}
-
 class Project {
     public enum ProjectType { PRACTICAL, THEORETICAL }
 
@@ -81,6 +56,61 @@ class Project {
         return projectName.equals(project.projectName);
     }
 }
+
+class Student extends Person {
+    private Long regNumber;
+    private Project[] favoriteProjects= new Project[0];
+
+    public Student(String name, LocalDate birthdate, Long regNumber) {
+        this.name=name;
+        this.birthdate=birthdate;
+        this.regNumber = regNumber;
+    }
+
+    public void addProject(Project project) {
+        if (!containsProject(project)) {
+            Project[] newProjects = new Project[favoriteProjects.length + 1];
+            for (int i = 0; i < favoriteProjects.length; i++) {
+                newProjects[i] = favoriteProjects[i];
+            }
+            newProjects[favoriteProjects.length] = project;
+            favoriteProjects = newProjects;
+        }
+    }
+
+    private boolean containsProject(Project project) {
+        for (Project p : favoriteProjects) {
+            if (p.equals(project)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Long getRegNumber() {
+        return regNumber;
+    }
+    public Project[] getFavoriteProjects() {
+        return favoriteProjects;
+    }
+
+    public void printProjects() {
+        for (Project p : favoriteProjects) {
+            System.out.print(p+" ");
+            System.out.println();
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null ||  !(obj instanceof Student))
+            return false;
+        Student student = (Student) obj;
+        return regNumber.equals(student.regNumber);
+    }
+}
+
 
 class Teacher extends Person {
     private Project[] projects=new Project[0];
@@ -125,13 +155,42 @@ class Teacher extends Person {
 }
 
 class Problem {
-    private Student[] students;
-    private Teacher[] teachers;
+    protected Student[] students;
+    protected Teacher[] teachers;
+    protected Project[] projects;
 
     public Problem() {
         this.students = new Student[0];
         this.teachers = new Teacher[0];
+        this.projects = new Project[0];
     }
+
+    public Problem(Student[] students, Teacher[] teachers, Project[] projects) {
+        this.students = students;
+        this.teachers = teachers;
+        this.projects = projects;
+    }
+
+    public Student[] getStudents() {
+        return students;
+    }
+    public Teacher[] getTeachers() {
+        return teachers;
+    }
+    public Project[] getProjects() {
+        return projects;
+    }
+        public void addProject(Project project) {
+            if (!containsProject(project)) {
+                Project[] newProjects = new Project[projects.length + 1];
+                for (int i = 0; i < projects.length; i++) {
+                    newProjects[i] = projects[i];
+                }
+                newProjects[projects.length] = project;
+                projects = newProjects;
+            }
+        }
+
 
     public void addStudent(Student student) {
         if (!containsStudent(student)) {
@@ -172,6 +231,14 @@ class Problem {
         }
         return false;
     }
+    private boolean containsProject(Project project) {
+        for (Project p : projects) {
+            if (p.equals(project)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public Person[] getAllPersons() {
         Person[] persons = new Person[students.length + teachers.length];
@@ -184,7 +251,49 @@ class Problem {
         }
         return persons;
     }
+
 }
+
+class Solution extends Problem {
+    private Project[] finalProjects;
+
+    public Solution(Student[] students, Teacher[] teachers, Project[] projects) {
+        this.students = students;
+        this.teachers = teachers;
+        this.projects = projects;
+        this.finalProjects = new Project[students.length];
+    }
+
+    public void greedy(int k) {
+        if (k == students.length) {
+            for (Project project : finalProjects) {
+                System.out.print(project + " ");
+            }
+            System.out.println();
+            return;
+        }
+
+        Project[] preferredProjects = students[k].getFavoriteProjects();
+        for (Project project : preferredProjects) {
+            if (!viz(project)) {
+                finalProjects[k] = project;
+                greedy(k + 1);
+                finalProjects[k] = null;
+            }
+        }
+    }
+
+    private boolean viz(Project project) {
+        for (Project p : finalProjects) {
+            if (p != null && p.equals(project)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+
 
 
 
@@ -209,6 +318,19 @@ public class Main {
 
         t1.addProject(p1);
         t1.addProject(p2);
+        s1.addProject(p1);
+        s1.printProjects();
+        s2.addProject(p1);
+        s2.addProject(p2);
+        Problem problem2 = new Problem();
+        problem2.addStudent(s1);
+        problem2.addStudent(s2);
+        problem2.addTeacher(t1);
+        problem2.addTeacher(t2);
+        problem2.addProject(p1);
+        problem2.addProject(p2);
+        Solution solution=new Solution(problem.getStudents(), problem.getTeachers(), problem.getProjects());
+        solution.greedy(0);
 
 
         for (Person p : problem.getAllPersons()) {
