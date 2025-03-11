@@ -1,4 +1,8 @@
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
+
 
 abstract class Person {
     protected String name;
@@ -180,16 +184,17 @@ class Problem {
     public Project[] getProjects() {
         return projects;
     }
-        public void addProject(Project project) {
-            if (!containsProject(project)) {
-                Project[] newProjects = new Project[projects.length + 1];
-                for (int i = 0; i < projects.length; i++) {
-                    newProjects[i] = projects[i];
-                }
-                newProjects[projects.length] = project;
-                projects = newProjects;
+
+    public void addProject(Project project) {
+        if (!containsProject(project)) {
+            Project[] newProjects = new Project[projects.length + 1];
+            for (int i = 0; i < projects.length; i++) {
+                newProjects[i] = projects[i];
             }
+            newProjects[projects.length] = project;
+            projects = newProjects;
         }
+    }
 
 
     public void addStudent(Student student) {
@@ -255,47 +260,46 @@ class Problem {
 }
 
 class Solution extends Problem {
-    private Project[] finalProjects;
+    private boolean hallConditionSatisfied;
 
     public Solution(Student[] students, Teacher[] teachers, Project[] projects) {
         this.students = students;
         this.teachers = teachers;
         this.projects = projects;
-        this.finalProjects = new Project[students.length];
+        this.hallConditionSatisfied = true;
     }
 
-    public void greedy(int k) {
-        if (k == students.length) {
-            for (Project project : finalProjects) {
-                System.out.print(project + " ");
+    public boolean canAllocateProjects() {
+        generateSubsets(0, new Student[students.length], 0);
+        return hallConditionSatisfied;
+    }
+
+    private void generateSubsets(int index, Student[] currentSubset, int subsetSize) {
+        if (!hallConditionSatisfied) return;
+
+        if (index == students.length) {
+            if (subsetSize > 0 && !checkHallCondition(currentSubset, subsetSize)) {
+                hallConditionSatisfied = false;
             }
-            System.out.println();
             return;
         }
-
-        Project[] preferredProjects = students[k].getFavoriteProjects();
-        for (Project project : preferredProjects) {
-            if (!viz(project)) {
-                finalProjects[k] = project;
-                greedy(k + 1);
-                finalProjects[k] = null;
-            }
-        }
+        generateSubsets(index + 1, currentSubset, subsetSize);
+        currentSubset[subsetSize] = students[index];
+        generateSubsets(index + 1, currentSubset, subsetSize + 1);
+        currentSubset[subsetSize] = null;
     }
 
-    private boolean viz(Project project) {
-        for (Project p : finalProjects) {
-            if (p != null && p.equals(project)) {
-                return true;
+    private boolean checkHallCondition(Student[] subset, int subsetSize) {
+        Set<Project> subsetProjects = new HashSet<>();
+        for (int i = 0; i < subsetSize; i++) {
+            Student student = subset[i];
+            for (Project project : student.getFavoriteProjects()) {
+                subsetProjects.add(project);
             }
         }
-        return false;
+        return subsetProjects.size() >= subsetSize;
     }
 }
-
-
-
-
 
 public class Main {
     public static void main(String[] args) {
@@ -304,37 +308,25 @@ public class Main {
         Student s1 = new Student("Alice", LocalDate.of(2000, 1, 15), 123L);
         Student s2 = new Student("Bob", LocalDate.of(1999, 5, 22), 456L);
 
+        s1.addProject(new Project("AI", Project.ProjectType.THEORETICAL));
+        s1.addProject(new Project("LFAC", Project.ProjectType.PRACTICAL));
+        s2.addProject(new Project("AI", Project.ProjectType.THEORETICAL));
+
         problem.addStudent(s1);
         problem.addStudent(s2);
 
-        Teacher t1 = new Teacher("Ana",LocalDate.of(1990, 8, 30));
+        Teacher t1 = new Teacher("Ana", LocalDate.of(1990, 8, 30));
         Teacher t2 = new Teacher("Alex", LocalDate.of(1981, 9, 20));
+
+        t1.addProject(new Project("AI", Project.ProjectType.THEORETICAL));
+        t1.addProject(new Project("BD", Project.ProjectType.PRACTICAL));
+        t2.addProject(new Project("LFAC", Project.ProjectType.PRACTICAL));
 
         problem.addTeacher(t1);
         problem.addTeacher(t2);
 
-        Project p1 = new Project("AI", Project.ProjectType.THEORETICAL);
-        Project p2 = new Project("BD", Project.ProjectType.PRACTICAL);
-
-        t1.addProject(p1);
-        t1.addProject(p2);
-        s1.addProject(p1);
-        s1.printProjects();
-        s2.addProject(p1);
-        s2.addProject(p2);
-        Problem problem2 = new Problem();
-        problem2.addStudent(s1);
-        problem2.addStudent(s2);
-        problem2.addTeacher(t1);
-        problem2.addTeacher(t2);
-        problem2.addProject(p1);
-        problem2.addProject(p2);
-        Solution solution=new Solution(problem.getStudents(), problem.getTeachers(), problem.getProjects());
-        solution.greedy(0);
-
-
-        for (Person p : problem.getAllPersons()) {
-            System.out.println(p);
-        }
+        Solution solution = new Solution(problem.getStudents(), problem.getTeachers(), problem.getProjects());
+        boolean possible = solution.canAllocateProjects();
+        System.out.println(possible);
     }
 }

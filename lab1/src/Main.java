@@ -4,7 +4,7 @@ public class Main {
         int n = Integer.parseInt(args[0]);
         int k = Integer.parseInt(args[1]);
         int[] sol = new int[n];
-        //homework(n, k);
+        homework(n, k);
         a = new int[][]{
                 {0, 1, 0, 1, 1},
                 {1, 0, 1, 1, 0},
@@ -12,7 +12,7 @@ public class Main {
                 {1, 1, 1, 0, 1},
                 {1, 0, 1, 1, 0}
         };
-        bonus(a.length, 3);
+        //bonus(a.length, 3);
         //pentru independent set rulez clica si apoi elimin nodurile gasite din multimea de noduri si rulez din nou
     }
 
