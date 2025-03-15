@@ -261,12 +261,40 @@ class Problem {
 
 class Solution extends Problem {
     private boolean hallConditionSatisfied;
+    private Project[] finalProjects;
 
     public Solution(Student[] students, Teacher[] teachers, Project[] projects) {
         this.students = students;
         this.teachers = teachers;
         this.projects = projects;
+        this.finalProjects = new Project[students.length];
         this.hallConditionSatisfied = true;
+    }
+    public void greedy(int k) {
+        if (k == students.length) {
+            for (Project project : finalProjects) {
+                System.out.print(project + " ");
+            }
+            System.out.println();
+            return;
+        }
+
+        Project[] preferredProjects = students[k].getFavoriteProjects();
+        for (Project project : preferredProjects) {
+            if (!viz(project)) {
+                finalProjects[k] = project;
+                greedy(k + 1);
+                finalProjects[k] = null;
+            }
+        }
+    }
+    private boolean viz(Project project) {
+        for (Project p : finalProjects) {
+            if (p != null && p.equals(project)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean canAllocateProjects() {

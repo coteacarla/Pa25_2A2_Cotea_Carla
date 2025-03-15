@@ -80,6 +80,49 @@ public class Schedule {
       }
     }
   }
+  public void bonus() {
+    Map<Runway, Integer> runwayUsage = new HashMap<>();
+    for (Runway runway : airport.getRunways()) {
+      runwayUsage.put(runway, 0);
+    }
+
+    int totalRunways = airport.getRunways().size();
+    int maxFlightsPerRunway = (int) Math.ceil((double) flights.size() / totalRunways);
+
+    for (Flight flight : flights) {
+      if (!flightMap.containsKey(flight)) {
+        Runway bestRunway = null;
+
+        for (Runway runway : airport.getRunways()) {
+          boolean overlap = false;
+
+          for (Map.Entry<Flight, Runway> entry : flightMap.entrySet()) {
+            if (entry.getValue().equals(runway)) {
+              Flight scheduledFlight = entry.getKey();
+              if (scheduledFlight.checkOverlapping(flight.getInterval())) {
+                overlap = true;
+                break;
+              }
+            }
+          }
+
+          if (!overlap && runwayUsage.get(runway) < maxFlightsPerRunway) {
+            bestRunway = runway;
+          }
+        }
+
+        if (bestRunway != null) {
+          flightMap.put(flight, bestRunway);
+          runwayUsage.put(bestRunway, runwayUsage.get(bestRunway) + 1);
+        }
+        else {
+          flightMap.put(flight, null);
+          System.out.println("No runway found for " + flight);
+        }
+        }
+      }
+    }
+
 
   public void printSchedule() {
       for (Map.Entry<Flight, Runway> entry : flightMap.entrySet()){
@@ -87,4 +130,5 @@ public class Schedule {
       }
   }
   }
+
 

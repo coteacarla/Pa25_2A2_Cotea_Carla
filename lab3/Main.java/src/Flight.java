@@ -14,6 +14,7 @@ public class Flight {
     public void setInterval(Pair<LocalTime, LocalTime> interval) {
         this.interval = interval;
     }
+
     public int getFlightNo() {
         return flightNo;
     }
