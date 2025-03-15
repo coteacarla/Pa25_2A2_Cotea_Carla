@@ -27,11 +27,13 @@ public class Main {
         Flight flight2=new Flight(12,slot2);
         Flight flight3=new Flight(13,slot3);
         Flight flight4=new Flight(14,slot2);
+        Flight flight5=new Flight(15,slot3);
         Schedule schedule1=new Schedule(airports);
         schedule1.add(flight1);
         schedule1.add(flight2);
         schedule1.add(flight3);
         schedule1.add(flight4);
+        schedule1.add(flight5);
         schedule1.scheduleFlights();
         schedule1.printSchedule();
 

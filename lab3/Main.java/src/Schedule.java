@@ -1,3 +1,4 @@
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
@@ -116,8 +117,11 @@ public class Schedule {
           runwayUsage.put(bestRunway, runwayUsage.get(bestRunway) + 1);
         }
         else {
-          flightMap.put(flight, null);
-          System.out.println("No runway found for " + flight);
+          Pair<LocalTime, LocalTime> currentinterval=flight.getInterval();
+          currentinterval.setFirst(currentinterval.getFirst().plusMinutes(10));
+          currentinterval.setSecond(currentinterval.getSecond().plusMinutes(10));
+          flight.setInterval(currentinterval);
+          bonus();
         }
         }
       }
