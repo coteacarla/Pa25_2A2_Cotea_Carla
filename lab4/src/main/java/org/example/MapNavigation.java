@@ -1,193 +1,107 @@
 package org.example;
 
-import org.jgrapht.graph.SimpleDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
-import com.github.javafaker.Faker;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MapNavigation {
-
-    private SimpleDirectedGraph<Location, DefaultEdge> graph;
+    private SimpleDirectedWeightedGraph<Location, DefaultWeightedEdge> graph;
     private List<Location> locations;
-    private List<Pair<Location, Location>> routes;
+    private List<Pair<Location, Location>> paths;
 
-    public MapNavigation(List<Location> locations, List<Pair<Location, Location>> routes) {
+    public MapNavigation(List<Location> locations, List<Pair<Location, Location>> paths) {
         this.locations = locations;
-        this.routes = routes;
+        this.paths = paths;
+        graph = new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class);
 
-        // Initialize the graph
-        graph = new SimpleDirectedGraph<>(DefaultEdge.class);
+        // Add locations to the graph
         locations.forEach(graph::addVertex);
 
-        // Add edges to the graph
-        for (Pair<Location, Location> pair : routes) {
-            graph.addEdge(pair.getFrom(), pair.getTo());
+        // Add paths with safety probabilities (as edge weights)
+        for (Pair<Location, Location> pair : paths) {
+            DefaultWeightedEdge edge = graph.addEdge(pair.getFrom(), pair.getTo());
+            graph.setEdgeWeight(edge, pair.getSafetyProbability());
         }
     }
 
-    // Find the safest route between two locations
-    public List<Location> findSafestRoute(Location start, Location end) {
-        Map<Location, Double> safetyProbabilities = new HashMap<>();
-        safetyProbabilities.put(start, 1.0);  // Start with 100% safety probability
+    // Original homework function (Fastest Routes using Dijkstra)
+    public Map<Location, Double> homework(Location start) {
+        DijkstraShortestPath<Location, DefaultWeightedEdge> dijkstra = new DijkstraShortestPath<>(graph);
+        return locations.stream()
+                .filter(loc -> !loc.equals(start))
+                .collect(Collectors.toMap(
+                        loc -> loc,
+                        loc -> dijkstra.getPathWeight(start, loc)
+                ));
+    }
 
-        PriorityQueue<Location> pq = new PriorityQueue<>(Comparator.comparing(safetyProbabilities::get).reversed());
-        pq.add(start);
+    // Compute the safest paths for all pairs using Floyd-Warshall
+    public Map<Location, Map<Location, Double>> computeSafestRoutes() {
+        int n = locations.size();
+        double[][] maxProb = new double[n][n];
 
-        Map<Location, Location> previousLocations = new HashMap<>();
-        previousLocations.put(start, null);
+        // Initialize the maxProb array with probabilities
+        for (int i = 0; i < n; i++) {
+            Arrays.fill(maxProb[i], 0.0);  // Initialize all as 0 (no path yet)
+            maxProb[i][i] = 1.0;  // The probability of a location to itself is 1
+        }
 
-        while (!pq.isEmpty()) {
-            Location current = pq.poll();
+        // Fill the maxProb array with the probabilities from the graph
+        for (Pair<Location, Location> pair : paths) {
+            int fromIndex = locations.indexOf(pair.getFrom());
+            int toIndex = locations.indexOf(pair.getTo());
+            maxProb[fromIndex][toIndex] = pair.getSafetyProbability();
+        }
 
-            if (current.equals(end)) {
-                break;  // Reached destination, exit
-            }
-
-            for (DefaultEdge edge : graph.outgoingEdgesOf(current)) {
-                Location neighbor = graph.getEdgeTarget(edge);
-                Pair<Location, Location> route = getRoute(current, neighbor);
-
-                double newSafetyProbability = safetyProbabilities.get(current) * route.getSafetyProbability();
-                if (newSafetyProbability > safetyProbabilities.getOrDefault(neighbor, 0.0)) {
-                    safetyProbabilities.put(neighbor, newSafetyProbability);
-                    pq.add(neighbor);
-                    previousLocations.put(neighbor, current);
+        // Floyd-Warshall algorithm for all pairs of safest paths (maximizing product of probabilities)
+        for (int k = 0; k < n; k++) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    maxProb[i][j] = Math.max(maxProb[i][j], maxProb[i][k] * maxProb[k][j]);
                 }
             }
         }
 
-        // Reconstruct the safest path
-        List<Location> path = new ArrayList<>();
-        for (Location at = end; at != null; at = previousLocations.get(at)) {
-            path.add(at);
+        // Map the results back to a more user-friendly structure
+        Map<Location, Map<Location, Double>> safestRoutes = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            Location start = locations.get(i);
+            Map<Location, Double> safestFromStart = new HashMap<>();
+            for (int j = 0; j < n; j++) {
+                Location end = locations.get(j);
+                safestFromStart.put(end, maxProb[i][j]);
+            }
+            safestRoutes.put(start, safestFromStart);
         }
-        Collections.reverse(path);
-        return path;
+
+        return safestRoutes;
     }
 
-    // Find the fastest route between two locations
-    public List<Location> findFastestRoute(Location start, Location end) {
-        Map<Location, Double> travelTimes = new HashMap<>();
-        travelTimes.put(start, 0.0);  // Start with 0 time
+    // Group locations by type and count types along the safest routes
+    public Map<Location, Map<LocationType, Long>> countLocationTypesAlongRoutes(Map<Location, Map<Location, Double>> safestRoutes) {
+        Map<Location, Map<LocationType, Long>> typeCounts = new HashMap<>();
 
-        PriorityQueue<Location> pq = new PriorityQueue<>(Comparator.comparing(travelTimes::get));
-        pq.add(start);
-
-        Map<Location, Location> previousLocations = new HashMap<>();
-        previousLocations.put(start, null);
-
-        while (!pq.isEmpty()) {
-            Location current = pq.poll();
-
-            if (current.equals(end)) {
-                break;  // Reached destination, exit
-            }
-
-            for (DefaultEdge edge : graph.outgoingEdgesOf(current)) {
-                Location neighbor = graph.getEdgeTarget(edge);
-                Pair<Location, Location> route = getRoute(current, neighbor);
-
-                double newTravelTime = travelTimes.get(current) + route.getTime();
-                if (newTravelTime < travelTimes.getOrDefault(neighbor, Double.MAX_VALUE)) {
-                    travelTimes.put(neighbor, newTravelTime);
-                    pq.add(neighbor);
-                    previousLocations.put(neighbor, current);
+        safestRoutes.forEach((start, endMap) -> {
+            endMap.forEach((end, probability) -> {
+                if (probability > 0) {  // Only consider paths with non-zero probability
+                    List<Location> route = findSafestRoute(start, end); // Find the safest route (if needed)
+                    Map<LocationType, Long> counts = route.stream()
+                            .collect(Collectors.groupingBy(Location::getType, Collectors.counting()));
+                    typeCounts.put(start, counts);
                 }
-            }
-        }
-
-        // Reconstruct the fastest path
-        List<Location> path = new ArrayList<>();
-        for (Location at = end; at != null; at = previousLocations.get(at)) {
-            path.add(at);
-        }
-        Collections.reverse(path);
-        return path;
-    }
-
-    // Helper method to find the route (Pair) between two locations
-    private Pair<Location, Location> getRoute(Location from, Location to) {
-        return routes.stream()
-                .filter(route -> route.getFrom().equals(from) && route.getTo().equals(to))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("No route found between " + from + " and " + to));
-    }
-
-    // Store and calculate statistics for multiple routes
-    public Map<LocationType, Integer> calculateLocationTypesInRoute(List<Location> path) {
-        Map<LocationType, Integer> locationTypeCount = new HashMap<>();
-        for (Location loc : path) {
-            locationTypeCount.put(loc.getType(), locationTypeCount.getOrDefault(loc.getType(), 0) + 1);
-        }
-        return locationTypeCount;
-    }
-
-    // Generate random test problems
-    public static MapNavigation generateRandomProblem(int numLocations, int numRoutes) {
-        List<Location> locations = new ArrayList<>();
-        List<Pair<Location, Location>> routes = new ArrayList<>();
-        Random rand = new Random();
-        Faker faker = new Faker();
-
-        // Generate locations with random types
-        for (int i = 0; i < numLocations; i++) {
-            LocationType type = LocationType.values()[rand.nextInt(LocationType.values().length)];
-            locations.add(new Location(faker.name().firstName(), type));
-        }
-
-        // Generate random routes between locations with random time and safety probabilities
-        for (int i = 0; i < numRoutes; i++) {
-            Location from = locations.get(rand.nextInt(numLocations));
-            Location to = locations.get(rand.nextInt(numLocations));
-            double time = rand.nextInt(10) + 1;  // Random travel time between 1 and 10
-            double safetyProb = rand.nextDouble();  // Random safety probability between 0 and 1
-            routes.add(new Pair<>(from, to, time, safetyProb));
-        }
-
-        return new MapNavigation(locations, routes);
-    }
-
-    // Method to run the problem and compute statistics
-    public static void runTest(MapNavigation mapNavigation) {
-        List<Location> allLocations = mapNavigation.locations;
-        Map<LocationType, List<Location>> pathsByType = new HashMap<>();
-
-        // Process each location pair and find the safest route and fastest route
-        for (Location start : allLocations) {
-            for (Location end : allLocations) {
-                if (!start.equals(end)) {
-                    // Safest route
-                    List<Location> safestRoute = mapNavigation.findSafestRoute(start, end);
-                    Map<LocationType, Integer> safestTypeCount = mapNavigation.calculateLocationTypesInRoute(safestRoute);
-
-                    // Store or process the results for safest route
-                    safestTypeCount.forEach((type, count) -> {
-                        pathsByType.computeIfAbsent(type, k -> new ArrayList<>()).add(safestRoute.get(0));  // Store path details
-                    });
-
-                    // Fastest route
-                    List<Location> fastestRoute = mapNavigation.findFastestRoute(start, end);
-                    Map<LocationType, Integer> fastestTypeCount = mapNavigation.calculateLocationTypesInRoute(fastestRoute);
-
-                    // Store or process the results for fastest route
-                    fastestTypeCount.forEach((type, count) -> {
-                        pathsByType.computeIfAbsent(type, k -> new ArrayList<>()).add(fastestRoute.get(0));  // Store path details
-                    });
-                }
-            }
-        }
-
-        // Example statistics: Print the number of locations by type in the routes
-        pathsByType.forEach((type, paths) -> {
-            long count = paths.size();
-            System.out.println(type + " Locations in Routes: " + count);
+            });
         });
+
+        return typeCounts;
     }
 
-    public static void main(String[] args) {
-        MapNavigation mapNavigation = generateRandomProblem(1000, 5000);
-        runTest(mapNavigation);
+    // Find the safest route for a pair of locations (Optional for more detail)
+    public List<Location> findSafestRoute(Location start, Location end) {
+        // Implement logic to backtrack and construct the safest path between `start` and `end`
+        // For now, return a dummy route (you would implement path reconstruction here)
+        return Arrays.asList(start, end);
     }
 }

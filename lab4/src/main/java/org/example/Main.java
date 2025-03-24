@@ -1,18 +1,19 @@
 package org.example;
 
 import com.github.javafaker.Faker;
-import org.jgrapht.graph.SimpleDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 public class Main {
-
     public static void main(String[] args) {
+        // Initialize Faker for random location generation
         Faker faker = new Faker();
+        Random rand = new Random();
 
-        // Generate random locations using Faker
+        // 1. Generate random locations
         List<Location> locations = Arrays.asList(
                 new Location(faker.name().firstName(), LocationType.FRIENDLY),
                 new Location(faker.name().firstName(), LocationType.ENEMY),
@@ -22,110 +23,52 @@ public class Main {
                 new Location(faker.name().firstName(), LocationType.FRIENDLY)
         );
 
-        // 1. Friendly locations in a TreeSet (sorted naturally by name)
-        TreeSet<Location> friendlyLocations = locations.stream()
-                .filter(loc -> loc.getType() == LocationType.FRIENDLY)
-                .collect(Collectors.toCollection(TreeSet::new));
-
-        System.out.println("Friendly Locations (Sorted by Name):");
-        friendlyLocations.forEach(System.out::println);
-
-        // 2. Enemy locations in a LinkedList, sorted by type and then by name
-        LinkedList<Location> enemyLocations = locations.stream()
-                .filter(loc -> loc.getType() == LocationType.ENEMY)
-                .sorted(Comparator.comparing(Location::getType).thenComparing(Location::getName))
-                .collect(Collectors.toCollection(LinkedList::new));
-
-        System.out.println("\nEnemy Locations (Sorted by Type, then Name):");
-        enemyLocations.forEach(System.out::println);
-
-        // 2. Neutral locations in a LinkedList
-        LinkedList<Location> neutralLocations = locations.stream()
-                .filter(loc -> loc.getType() == LocationType.NEUTRAL)
-                .collect(Collectors.toCollection(LinkedList::new));
-
-        System.out.println("\nNeutral Locations :");
-        neutralLocations.forEach(System.out::println);
-
-
-
-        // 3. Set up the graph using JGraphT (SimpleDirectedGraph)
-        SimpleDirectedGraph<Location, DefaultEdge> graph = new SimpleDirectedGraph<>(DefaultEdge.class);
-
-        // Add locations as vertices to the graph
+        // 2. Create routes with random weights (safety probabilities)
+        List<Pair<Location, Location>> routes = new ArrayList<>();
+        SimpleDirectedWeightedGraph<Location, DefaultWeightedEdge> graph = new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class);
         locations.forEach(graph::addVertex);
 
-        // 4. Define some random routes (edges with time and safety probability)
-        Random rand = new Random();
-        List<Pair<Location, Location>> routes = new ArrayList<>();
         for (int i = 0; i < locations.size(); i++) {
-            for (int j = i + 1; j < locations.size(); j++) {
-                // Random time and safety probability between locations
-                double time = rand.nextInt(10) + 1;  // Random time between 1 and 10
-                double safetyProb = rand.nextDouble();  // Random safety probability between 0 and 1
-                routes.add(new Pair<>(locations.get(i), locations.get(j), time, safetyProb));
-                graph.addEdge(locations.get(i), locations.get(j)); // Create a directed edge
+            for (int j = 0; j < locations.size(); j++) {
+                if (i != j) {
+                    double time = 1 + rand.nextInt(10); // Random travel time
+                    double safetyProb = rand.nextDouble(); // Random safety probability
+                    routes.add(new Pair<>(locations.get(i), locations.get(j), time, safetyProb));
+                    DefaultWeightedEdge edge = graph.addEdge(locations.get(i), locations.get(j));
+                    graph.setEdgeWeight(edge, time);
+                }
             }
         }
 
-        // 5. Calculate the safest route and fastest route using modified Dijkstra's Algorithm
-        Location startLocation = locations.get(0);  // Assume the first location is the start
-
+        // 3. Initialize MapNavigation
         MapNavigation mapNavigation = new MapNavigation(locations, routes);
-        Map<Location, Double> safetyProbabilities = new HashMap<>();
-        Map<Location, Double> fastestTimes = new HashMap<>();
 
-        // Find the safest and fastest path from the start location to all other locations
-        for (Location loc : locations) {
-            // Find safest route
-            List<Location> safestRoute = mapNavigation.findSafestRoute(startLocation, loc);
-            double safetyProbability = 1.0;
-            for (int i = 0; i < safestRoute.size() - 1; i++) {
-                Location from = safestRoute.get(i);
-                Location to = safestRoute.get(i + 1);
-                Pair<Location, Location> route = routes.stream()
-                        .filter(r -> r.getFrom().equals(from) && r.getTo().equals(to))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("Route not found"));
+        // 4. Compute fastest routes from the first location using homework method
+        Location startLocation = locations.get(0);
+        Map<Location, Double> fastestRoutes = mapNavigation.homework(startLocation);
 
-                safetyProbability *= route.getSafetyProbability();
-            }
-            safetyProbabilities.put(loc, safetyProbability);
+        // 5. Display fastest routes
+        System.out.println("Fastest Routes from " + startLocation.getName() + ":");
+        fastestRoutes.forEach((location, time) ->
+                System.out.println(location.getName() + ": " + time + " min"));
 
-            // Find fastest route (sum of times)
-            List<Location> fastestRoute = mapNavigation.findFastestRoute(startLocation, loc);
-            double fastestTime = 0.0;
-            for (int i = 0; i < fastestRoute.size() - 1; i++) {
-                Location from = fastestRoute.get(i);
-                Location to = fastestRoute.get(i + 1);
-                Pair<Location, Location> route = routes.stream()
-                        .filter(r -> r.getFrom().equals(from) && r.getTo().equals(to))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("Route not found"));
+        // 6. Compute safest routes using Floyd-Warshall algorithm
+        Map<Location, Map<Location, Double>> safestRoutes = mapNavigation.computeSafestRoutes();
 
-                fastestTime += route.getTime();
-            }
-            fastestTimes.put(loc, fastestTime);
-        }
+        // 7. Display safest routes
+        System.out.println("\nSafest Routes (Maximized Probability) from " + startLocation.getName() + ":");
+        safestRoutes.get(startLocation).forEach((location, prob) ->
+                System.out.println(location.getName() + ": " + prob));
 
-        // 6. Group locations by type and display fastest times
-        Map<LocationType, List<Location>> locationsByType = new HashMap<>();
-        for (Location location : locations) {
-            locationsByType.computeIfAbsent(location.getType(), k -> new ArrayList<>()).add(location);
-        }
+        // 8. Count locations by type along the safest routes
+        Map<Location, Map<LocationType, Long>> typeCounts = mapNavigation.countLocationTypesAlongRoutes(safestRoutes);
 
-        // Sort locations by type and then by name
-        locationsByType.forEach((type, locs) -> {
-            locs.sort(Comparator.naturalOrder());  // Sort by name
-
-            System.out.println("\n" + type + " Locations (Safest & Fastest Routes):");
-            locs.forEach(loc -> {
-                Double safetyProb = safetyProbabilities.get(loc);
-                Double fastestTime = fastestTimes.get(loc);
-                System.out.println(loc + ": " +
-                        (safetyProb == 0.0 ? "No Path" : safetyProb + " safety probability") +
-                        ", Fastest Time: " + (fastestTime == 0.0 ? "No Path" : fastestTime + " time"));
-            });
+        // 9. Display the count of location types along the safest routes
+        System.out.println("\nCount of Location Types along Safest Routes:");
+        typeCounts.forEach((start, typeCount) -> {
+            System.out.println("\nFrom " + start.getName() + ":");
+            typeCount.forEach((type, count) ->
+                    System.out.println("Type: " + type + " -> " + count + " occurrences"));
         });
     }
 }
