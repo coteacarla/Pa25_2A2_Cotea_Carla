@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>lab4</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <!-- Update the Java version if necessary -->
+        <maven.compiler.source>17</maven.compiler.source> <!-- You can set this to 17 or 11 if you're working with those versions -->
+        <maven.compiler.target>17</maven.compiler.target> <!-- Make sure the JDK version matches -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- Java Faker for generating fake names -->
+        <dependency>
+            <groupId>com.github.javafaker</groupId>
+            <artifactId>javafaker</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
+        <!-- JGraphT is a widely used library for graph algorithms -->
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-core</artifactId>
+            <version>1.5.1</version> <!-- You can also check for newer versions if needed -->
+        </dependency>
+
+        <!-- Graph4J (You might want to replace it with JGraphT if you need more advanced graph algorithms) -->
+        <dependency>
+            <groupId>org.graph4j</groupId>
+            <artifactId>graph4j</artifactId>
+            <version>1.0.8</version>
+        </dependency>
+
+        <!-- Lombok for reducing boilerplate code -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.36</version>
+            <scope>provided</scope> <!-- Change to compile if you need it during runtime -->
+        </dependency>
+
+    </dependencies>
+
+</project>
