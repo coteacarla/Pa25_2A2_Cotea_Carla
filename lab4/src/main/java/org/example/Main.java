@@ -39,6 +39,16 @@ public class Main {
         System.out.println("\nEnemy Locations (Sorted by Type, then Name):");
         enemyLocations.forEach(System.out::println);
 
+        // 2. Neutral locations in a LinkedList
+        LinkedList<Location> neutralLocations = locations.stream()
+                .filter(loc -> loc.getType() == LocationType.NEUTRAL)
+                .collect(Collectors.toCollection(LinkedList::new));
+
+        System.out.println("\nNeutral Locations :");
+        neutralLocations.forEach(System.out::println);
+
+
+
         // 3. Set up the graph using JGraphT (SimpleDirectedGraph)
         SimpleDirectedGraph<Location, DefaultEdge> graph = new SimpleDirectedGraph<>(DefaultEdge.class);
 
