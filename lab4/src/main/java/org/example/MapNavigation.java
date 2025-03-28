@@ -17,17 +17,14 @@ public class MapNavigation {
         this.paths = paths;
         graph = new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class);
 
-        // Add locations to the graph
         locations.forEach(graph::addVertex);
-
-        // Add paths with safety probabilities (as edge weights)
         for (Pair<Location, Location> pair : paths) {
             DefaultWeightedEdge edge = graph.addEdge(pair.getFrom(), pair.getTo());
             graph.setEdgeWeight(edge, pair.getSafetyProbability());
         }
     }
 
-    // Original homework function (Fastest Routes using Dijkstra)
+
     public Map<Location, Double> homework(Location start) {
         DijkstraShortestPath<Location, DefaultWeightedEdge> dijkstra = new DijkstraShortestPath<>(graph);
         return locations.stream()
@@ -38,25 +35,25 @@ public class MapNavigation {
                 ));
     }
 
-    // Compute the safest paths for all pairs using Floyd-Warshall
+
     public Map<Location, Map<Location, Double>> computeSafestRoutes() {
         int n = locations.size();
         double[][] maxProb = new double[n][n];
 
-        // Initialize the maxProb array with probabilities
+
         for (int i = 0; i < n; i++) {
-            Arrays.fill(maxProb[i], 0.0);  // Initialize all as 0 (no path yet)
-            maxProb[i][i] = 1.0;  // The probability of a location to itself is 1
+            Arrays.fill(maxProb[i], 0.0);
+            maxProb[i][i] = 1.0;
         }
 
-        // Fill the maxProb array with the probabilities from the graph
+
         for (Pair<Location, Location> pair : paths) {
             int fromIndex = locations.indexOf(pair.getFrom());
             int toIndex = locations.indexOf(pair.getTo());
             maxProb[fromIndex][toIndex] = pair.getSafetyProbability();
         }
 
-        // Floyd-Warshall algorithm for all pairs of safest paths (maximizing product of probabilities)
+
         for (int k = 0; k < n; k++) {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
@@ -65,7 +62,7 @@ public class MapNavigation {
             }
         }
 
-        // Map the results back to a more user-friendly structure
+
         Map<Location, Map<Location, Double>> safestRoutes = new HashMap<>();
         for (int i = 0; i < n; i++) {
             Location start = locations.get(i);
@@ -80,14 +77,13 @@ public class MapNavigation {
         return safestRoutes;
     }
 
-    // Group locations by type and count types along the safest routes
     public Map<Location, Map<LocationType, Long>> countLocationTypesAlongRoutes(Map<Location, Map<Location, Double>> safestRoutes) {
         Map<Location, Map<LocationType, Long>> typeCounts = new HashMap<>();
 
         safestRoutes.forEach((start, endMap) -> {
             endMap.forEach((end, probability) -> {
-                if (probability > 0) {  // Only consider paths with non-zero probability
-                    List<Location> route = findSafestRoute(start, end); // Find the safest route (if needed)
+                if (probability > 0) {
+                    List<Location> route = findSafestRoute(start, end);
                     Map<LocationType, Long> counts = route.stream()
                             .collect(Collectors.groupingBy(Location::getType, Collectors.counting()));
                     typeCounts.put(start, counts);
@@ -98,10 +94,8 @@ public class MapNavigation {
         return typeCounts;
     }
 
-    // Find the safest route for a pair of locations (Optional for more detail)
+
     public List<Location> findSafestRoute(Location start, Location end) {
-        // Implement logic to backtrack and construct the safest path between `start` and `end`
-        // For now, return a dummy route (you would implement path reconstruction here)
         return Arrays.asList(start, end);
     }
 }
