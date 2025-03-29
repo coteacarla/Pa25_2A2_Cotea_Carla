@@ -2,7 +2,6 @@ package repository;
 import models.Image;
 import exceptions.ImageNotFoundException;
 import exceptions.DuplicateImageException;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
@@ -16,6 +15,11 @@ import java.util.stream.Stream;
 public class Repository implements Serializable {
     private static final long serialVersionUID = 1L; // Required for serialization
     private final List<Image> images = new ArrayList<>();
+    private RepositoryService repositoryService= new RepositoryService();
+
+    public RepositoryService getRepositoryService() {
+        return repositoryService;
+    }
 
     public Repository() {}
 
@@ -39,7 +43,8 @@ public class Repository implements Serializable {
                 .findFirst()
                 .orElseThrow(() -> new ImageNotFoundException("Image not found: " + name));
     }
-    public List<Image> getAllImages() {
+    public List<Image> getAllImages()
+    {
         return new ArrayList<> (images);
     }
 

@@ -10,13 +10,14 @@ import java.util.Scanner;
 public class Shell {
     private final Map<String, Command> commands;
     Repository repository;
-    public Shell(Repository repository) {
-        repository = repository;
+    public Shell(Repository repo) {
+        repository = repo;
         commands = new HashMap<>();
         commands.put("add",new AddCommand());
         commands.put("remove",new RemoveCommand());
         commands.put("load",new LoadCommand());
         commands.put("update",new UpdateCommand());
+        commands.put("save",new SaveCommand());
         commands.put("report",new ReportCommand());
         commands.put("exit",new ExitCommand());
     }
@@ -32,7 +33,7 @@ public class Shell {
             String[] args = new String[parts.length - 1];
             System.arraycopy(parts, 1, args, 0, parts.length - 1);
             if(commands.containsKey(commandName)) {
-                commands.get(commandName).execute(args);
+                commands.get(commandName).execute(args, repository);
             }
             else {
                 throw new UnknownCommandException(commandName);

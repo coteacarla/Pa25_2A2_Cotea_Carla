@@ -11,6 +11,7 @@ public class UpdateCommand implements Command {
 
         if(args.length < 3 && args.length>3) //prevname+newname+path
         throw new InvalidArgLength("Incorrect number of arguments");
+        System.out.println("Updating image with name " + args[0] + " to " + args[1] + " with length " + args[2] );
 
         if(args.length==3)
         {
@@ -22,11 +23,9 @@ public class UpdateCommand implements Command {
                 if(image==null)
                     throw new ImageNotFoundException("Image not found");
                 repository.remove(image);
-                Image newimage=repository.findImageByName(newname);
-                if(newimage==null)
-                    repository.add(newimage);
-                else
-                    throw new DuplicateImageException("Image with name "+newname+" already exists");
+                Image newimage=new Image(newname,newpath);
+                repository.add(newimage);
+
 
             } catch (ImageNotFoundException e) {
                 throw new RuntimeException(e);
