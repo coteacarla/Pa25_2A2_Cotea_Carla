@@ -20,6 +20,7 @@ public class Shell {
         commands.put("save",new SaveCommand());
         commands.put("report",new ReportCommand());
         commands.put("exit",new ExitCommand());
+        commands.put("addAll",new AddAllCommand());
     }
     public void run() {
         Scanner scanner = new Scanner(System.in);
