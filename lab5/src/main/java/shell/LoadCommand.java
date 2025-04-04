@@ -4,7 +4,6 @@ import repository.Repository;
 
 public class LoadCommand implements Command {
 
-    @Override
     public void execute(String[] args, Repository repository) {
         if (args.length != 1) {
             System.out.println("Usage: load <file-path>");

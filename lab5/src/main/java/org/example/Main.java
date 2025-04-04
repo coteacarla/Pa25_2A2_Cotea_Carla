@@ -1,11 +1,11 @@
 package org.example;
+import exceptions.DuplicateImageException;
 import models.Image;
 import clique.ImageGraph;
 import clique.BronKerboschMatrix;
 import repository.Repository;
 import shell.Shell;
 import java.util.Set;
-
 import java.util.List;
 
 public class Main {
@@ -13,7 +13,11 @@ public class Main {
 
         Repository repo=new Repository();
         Shell terminal = new Shell(repo);
-        terminal.run();
+        try {
+            terminal.run();
+        } catch (DuplicateImageException e) {
+            throw new RuntimeException(e);
+        }
         /*  //bonus
           List<Image> images = List.of(
                     new Image("img1", "/path1", List.of("cat", "pet")),

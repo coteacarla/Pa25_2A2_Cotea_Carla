@@ -1,5 +1,6 @@
 package shell;
 
+import exceptions.DuplicateImageException;
 import exceptions.UnknownCommandException;
 import repository.Repository;
 
@@ -22,7 +23,7 @@ public class Shell {
         commands.put("exit",new ExitCommand());
         commands.put("addAll",new AddAllCommand());
     }
-    public void run() {
+    public void run() throws DuplicateImageException {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.print("shell> ");

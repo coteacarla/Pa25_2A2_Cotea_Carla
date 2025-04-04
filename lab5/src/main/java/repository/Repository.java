@@ -36,7 +36,6 @@ public class Repository implements Serializable {
         Collections.shuffle(shuffledTags);
         List<String> randomTags = shuffledTags.subList(0, nrTags);
         images.add(new Image(image.name(), image.path(), image.date(), randomTags));
-        images.add(image);
     }
     public void remove(Image image) throws ImageNotFoundException{
         Image imageToRemove = images.get(images.indexOf(image));
