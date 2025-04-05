@@ -126,18 +126,14 @@ public class DrawingPanel extends JPanel {
         lines.clear();
     }
     public BufferedImage createImage() {
-        // Create a new BufferedImage to draw the game board
+
         BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = image.createGraphics();
 
-        // Clear the background (optional)
+
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, getWidth(), getHeight());
-
-        // Draw the game content (dots, lines, etc.)
         paint(g2d);
-
-        // Dispose the Graphics2D object
         g2d.dispose();
 
         return image;
