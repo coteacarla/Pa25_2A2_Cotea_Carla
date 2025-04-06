@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.example.SpanningTreeGenerator;
 
 public class DrawingPanel extends JPanel {
     final MainFrame frame;
@@ -19,7 +20,7 @@ public class DrawingPanel extends JPanel {
     private final List<Dot> dots = new ArrayList<>();
     private Dot firstSelectedDot = null;
     private Dot secondSelectedDot = null;
-    private final Map<Dot,Dot> lines= new HashMap<Dot,Dot>();
+    private final List<Line> lines= new ArrayList<>();
     private Player player1=new Player();
     private Player player2=new Player();
     private int turn=1;
@@ -49,7 +50,7 @@ public class DrawingPanel extends JPanel {
                             firstSelectedDot = dot;
                         } else {
                             secondSelectedDot = dot;
-                            lines.put(firstSelectedDot,secondSelectedDot);
+                            lines.add(new Line(firstSelectedDot, secondSelectedDot));
                             if(turn==1)
                                 player1.addScore(firstSelectedDot,secondSelectedDot);
                             else
@@ -95,9 +96,9 @@ public class DrawingPanel extends JPanel {
             g.setColor(Color.pink);
             Graphics2D g2d = (Graphics2D) g;
             g2d.setStroke(new BasicStroke(2));
-            for (Map.Entry<Dot, Dot> entry : lines.entrySet()) {
-                Dot start = entry.getKey();
-                Dot end = entry.getValue();
+            for (Line line : lines) {
+                Dot start = line.dot1;
+                Dot end = line.dot2;
                 g2d.drawLine(start.x, start.y, end.x, end.y);
             }
             repaint();
@@ -107,7 +108,7 @@ public class DrawingPanel extends JPanel {
         return dots;
     }
 
-    public Map<Dot,Dot> getLines() {
+    public List<Line> getLines() {
         return lines;
     }
 
@@ -117,9 +118,9 @@ public class DrawingPanel extends JPanel {
         repaint();
     }
 
-    public void setLines(Map<Dot,Dot> newLines) {
+    public void setLines(List<Line> newLines) {
         clearLines();
-        lines.putAll(newLines);
+        lines.addAll(newLines);
         repaint();
     }
     public void clearLines() {
@@ -139,5 +140,24 @@ public class DrawingPanel extends JPanel {
         return image;
     }
 
+    public void aiMove(int difficultyLevel) {
 
+        SpanningTreeGenerator spanningTreeGenerator = new SpanningTreeGenerator(dots, lines);
+        List<List<Line>> sortedTrees = spanningTreeGenerator.getSortedSpanningTrees();
+        List<Line> chosenTree;
+        if (difficultyLevel == 1) {
+            chosenTree = sortedTrees.get(0);
+        } else {
+            chosenTree = sortedTrees.get(sortedTrees.size() - 1);
+        }
+
+        for (Line line : chosenTree) {
+            if (!lines.contains(line)) {
+                lines.add(line);
+                if (turn == 2)
+                    player2.addScore(line.dot1, line.dot2);
+                turn = 3 - turn;
+            }
+        }
+    }
 }

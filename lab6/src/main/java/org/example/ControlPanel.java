@@ -49,7 +49,7 @@ public class ControlPanel extends JPanel {
         try(ObjectInputStream in = new ObjectInputStream(new FileInputStream("game.dat"))){
             frame.canvas.setDots((java.util.List<Dot>) in.readObject());
             frame.canvas.clearLines();
-            frame.canvas.setLines((java.util.Map<Dot, Dot>) in.readObject());
+            frame.canvas.setLines((java.util.List<Line>) in.readObject());
             frame.canvas.repaint();
         }
         catch (IOException | ClassNotFoundException ex){
