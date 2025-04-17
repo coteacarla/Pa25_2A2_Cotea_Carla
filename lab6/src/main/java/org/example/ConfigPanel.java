@@ -23,7 +23,7 @@ public class ConfigPanel extends JPanel {
         newGameButton = new JButton("New Game");
 
         newGameButton.addActionListener(this::startNewGame);
-        player1Type = new JComboBox<>(new String[]{"Human", "AI"});
+        player1Type = new JComboBox<>(new String[]{"Human"});
         player2Type = new JComboBox<>(new String[]{"Human", "AI"});
         player1Difficulty = new JComboBox<>(new String[]{"Easy", "Hard"});
         player2Difficulty = new JComboBox<>(new String[]{"Easy", "Hard"});
@@ -47,7 +47,6 @@ public class ConfigPanel extends JPanel {
         frame.canvas.generateDots(numDots);
         frame.canvas.clearLines();
         frame.canvas.repaint();
-        frame.canvas.player1IsAI = player1Type.getSelectedItem().equals("AI");
         frame.canvas.player2IsAI = player2Type.getSelectedItem().equals("AI");
         frame.canvas.player1Difficulty = player1Difficulty.getSelectedIndex() + 1;
         frame.canvas.player2Difficulty = player2Difficulty.getSelectedIndex() + 1;
