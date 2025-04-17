@@ -13,7 +13,7 @@ import org.example.SpanningTreeGenerator;
 
 public class DrawingPanel extends JPanel {
     final MainFrame frame;
-    private final int canvasWidth = 400, canvasHeight = 400;
+    private final int canvasWidth = 800, canvasHeight = 400;
     private final int dotSize = 10;
     private BufferedImage image;
     private Graphics2D offscreen;
@@ -24,6 +24,11 @@ public class DrawingPanel extends JPanel {
     private Player player1=new Player();
     private Player player2=new Player();
     private int turn=1;
+    public boolean player1IsAI = false;
+    public boolean player2IsAI = false;
+    public int player1Difficulty = 1;
+    public int player2Difficulty = 1;
+    boolean gameOverCalled = false;
 
     public DrawingPanel(MainFrame frame) {
         this.frame = frame;
@@ -39,28 +44,33 @@ public class DrawingPanel extends JPanel {
         offscreen.fillRect(0, 0, canvasWidth, canvasHeight);
     }
 
+
     private void initMouseListener() {
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                for (Dot dot : dots) {
-                    if (dot.contains(e.getX(), e.getY(), dotSize)) {
-                        System.out.println("Clicked at: " + e.getX() + ", " + e.getY() + ", " + dot.x + ", " + dot.y);
-                        if (firstSelectedDot == null) {
-                            firstSelectedDot = dot;
-                        } else {
-                            secondSelectedDot = dot;
-                            lines.add(new Line(firstSelectedDot, secondSelectedDot));
-                            if(turn==1)
-                                player1.addScore(firstSelectedDot,secondSelectedDot);
-                            else
-                                player2.addScore(firstSelectedDot,secondSelectedDot);
-                            turn=3-turn;
-                            repaint();
-                            firstSelectedDot = null;
-                            secondSelectedDot = null;
+                if ((turn == 1 && !player1IsAI) || (turn == 2 && !player2IsAI)) {
+                    for (Dot dot : dots) {
+                        if (dot.contains(e.getX(), e.getY(), dotSize)) {
+                            if (firstSelectedDot == null) {
+                                firstSelectedDot = dot;
+                            } else {
+                                secondSelectedDot = dot;
+                                lines.add(new Line(firstSelectedDot, secondSelectedDot));
+                                if(turn==1)
+                                    player1.addScore(firstSelectedDot,secondSelectedDot);
+                                else
+                                    player2.addScore(firstSelectedDot,secondSelectedDot);
+                                turn=3-turn;
+                                repaint();
+                                firstSelectedDot = null;
+                                secondSelectedDot = null;
+                                if(checkGameOver()){
+                                    gameOver();
+                                }
+                                return;
+                            }
                         }
-                        return;
                     }
                 }
             }
@@ -83,6 +93,19 @@ public class DrawingPanel extends JPanel {
         g.drawImage(image, 0, 0, this);
         paintDots(g);
         drawLines(g);
+        if (checkGameOver() && !gameOverCalled) {
+            gameOverCalled = true;
+            gameOver();
+        }
+        if ((turn == 1 && player1IsAI) || (turn == 2 && player2IsAI)) {
+            if (turn == 1) {
+                aiMove(player1Difficulty);
+            } else {
+                aiMove(player2Difficulty);
+            }
+
+            repaint();
+        }
     }
 
     private void paintDots(Graphics g) {
@@ -126,6 +149,42 @@ public class DrawingPanel extends JPanel {
     public void clearLines() {
         lines.clear();
     }
+    public void gameOver() {
+        int player1Score = player1.getScore();
+        int player2Score = player2.getScore();
+
+        String message;
+        if (player1Score > player2Score) {
+            message = "Player 1 wins! Score: " + player1Score + " vs. " + player2Score;
+        } else if (player2Score > player1Score) {
+            message = "Player 2 wins! Score: " + player2Score + " vs " + player1Score;
+        } else {
+            message = "It's a tie! Score: " + player1Score;
+        }
+
+        JOptionPane.showMessageDialog(this, message, "Game Over", JOptionPane.INFORMATION_MESSAGE);
+
+        lines.clear();
+        player1 = new Player();
+        player2 = new Player();
+        turn = 1;
+        repaint();
+    }
+
+    private boolean checkGameOver(){
+        if(dots.size() < 2) return false;
+
+        for(int i = 0; i < dots.size(); i++){
+            for(int j = i + 1; j < dots.size(); j++){
+                Line line = new Line(dots.get(i), dots.get(j));
+                Line reversedLine = new Line(dots.get(j), dots.get(i));
+                if(!lines.contains(line) && !lines.contains(reversedLine)){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     public BufferedImage createImage() {
 
         BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -141,23 +200,42 @@ public class DrawingPanel extends JPanel {
     }
 
     public void aiMove(int difficultyLevel) {
+        SpanningTreeGenerator generator = new SpanningTreeGenerator(dots, lines);
+        List<Line> mst = generator.generateMinimumSpanningTree(dots.get(0)); // Use the first dot as the starting node
 
-        SpanningTreeGenerator spanningTreeGenerator = new SpanningTreeGenerator(dots, lines);
-        List<List<Line>> sortedTrees = spanningTreeGenerator.getSortedSpanningTrees();
-        List<Line> chosenTree;
-        if (difficultyLevel == 1) {
-            chosenTree = sortedTrees.get(0);
-        } else {
-            chosenTree = sortedTrees.get(sortedTrees.size() - 1);
-        }
+        Line chosenLine = null;
+        int minCost = Integer.MAX_VALUE;
+        int maxCost = Integer.MIN_VALUE;
 
-        for (Line line : chosenTree) {
-            if (!lines.contains(line)) {
-                lines.add(line);
-                if (turn == 2)
-                    player2.addScore(line.dot1, line.dot2);
-                turn = 3 - turn;
+        for (Line line : mst) {
+            Line reversedLine = new Line(line.dot2, line.dot1);
+            if (!lines.contains(line) && !lines.contains(reversedLine)) {
+                if (difficultyLevel == 1) { // Easy difficulty (minimum cost)
+                    if (line.cost < minCost) {
+                        minCost = line.cost;
+                        chosenLine = line;
+                    }
+                } else { // Hard difficulty (maximum cost)
+                    if (line.cost > maxCost) {
+                        maxCost = line.cost;
+                        chosenLine = line;
+                    }
+                }
             }
         }
+
+        if (chosenLine != null) {
+            lines.add(chosenLine);
+            if (turn == 2) {
+                player2.addScore(chosenLine.dot1, chosenLine.dot2);
+            }
+
+            turn = 3 - turn;
+            repaint();
+        }
+
+
     }
+
+
 }
