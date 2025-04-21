@@ -18,7 +18,7 @@ public class Bag {
     }
     public synchronized List<Tile> extractTiles(int howMany) {
         Random rand = new Random();
-       /// Collections.shuffle(tiles, rand);
+        Collections.shuffle(tiles, rand);
         List<Tile> extracted = new ArrayList<>();
         for (int i = 0; i < howMany && !tiles.isEmpty(); i++) {
             extracted.add(tiles.remove(0));
