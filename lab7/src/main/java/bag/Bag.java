@@ -2,10 +2,7 @@ package bag;
 
 import tile.Tile;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Bag {
     private final List<Tile> tiles = new ArrayList<>();
@@ -20,6 +17,8 @@ public class Bag {
         }
     }
     public synchronized List<Tile> extractTiles(int howMany) {
+        Random rand = new Random();
+       /// Collections.shuffle(tiles, rand);
         List<Tile> extracted = new ArrayList<>();
         for (int i = 0; i < howMany && !tiles.isEmpty(); i++) {
             extracted.add(tiles.remove(0));
