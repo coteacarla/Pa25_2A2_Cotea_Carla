@@ -107,7 +107,7 @@ public class Player implements Runnable {
             extracted.set(index, temp);
 
             permute(extracted, index + 1, foundWords);
-
+//please please please
             temp = extracted.get(i);
             extracted.set(i, extracted.get(index));
             extracted.set(index, temp);
