@@ -89,7 +89,7 @@ public class Game {
         timeKeeper.start();
     }
     public static void main(String args[]) throws IOException {
-        String wordListFile = "C:/Users/User/Documents/words.txt";
+        String wordListFile = "C:/Users/Carla/Desktop/words.txt";
         Game game = new Game(wordListFile);
         game.addPlayer(new Player("Player 1", 0));
         game.addPlayer(new Player("Player 2", 1));

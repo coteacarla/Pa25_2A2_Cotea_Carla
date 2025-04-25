@@ -5,6 +5,7 @@ import tile.Tile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Player implements Runnable {
     private String name;
@@ -26,7 +27,8 @@ public class Player implements Runnable {
     }
 
     private boolean submitWord() {
-        List<Tile> extracted = game.getBag().extractTiles(7);
+        Random rand = new Random();
+        List<Tile> extracted = game.getBag().extractTiles(rand.nextInt(10));
         if (extracted.isEmpty()) {
             return false;
         }
