@@ -1,5 +1,8 @@
 package tile;
 
+import java.util.List;
+import java.util.Random;
+
 public class Tile {
     private final char letter;
     private final int points;

@@ -201,7 +201,7 @@ public class DrawingPanel extends JPanel {
 
     public void aiMove(int difficultyLevel) {
         SpanningTreeGenerator generator = new SpanningTreeGenerator(dots, lines);
-        List<Line> mst = generator.generateMinimumSpanningTree(dots.get(0)); // Use the first dot as the starting node
+        List<Line> mst = generator.generateMinimumSpanningTree(dots.get(0));
 
         Line chosenLine = null;
         int minCost = Integer.MAX_VALUE;
@@ -210,12 +210,12 @@ public class DrawingPanel extends JPanel {
         for (Line line : mst) {
             Line reversedLine = new Line(line.dot2, line.dot1);
             if (!lines.contains(line) && !lines.contains(reversedLine)) {
-                if (difficultyLevel == 1) { // Easy difficulty (minimum cost)
+                if (difficultyLevel == 1) {
                     if (line.cost < minCost) {
                         minCost = line.cost;
                         chosenLine = line;
                     }
-                } else { // Hard difficulty (maximum cost)
+                } else {
                     if (line.cost > maxCost) {
                         maxCost = line.cost;
                         chosenLine = line;
