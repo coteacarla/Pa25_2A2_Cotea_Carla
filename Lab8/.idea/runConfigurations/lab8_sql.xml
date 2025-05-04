@@ -1,8 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="lab8.sql" type="DatabaseScript" editBeforeRun="true" singleton="false">
-    <script-file value="$APPLICATION_CONFIG_DIR$/consoles/db/d74359a2-5198-4fd6-8869-906409c65ddb/console.sql" />
-    <script-mode>FILE</script-mode>
-    <data-source id="d74359a2-5198-4fd6-8869-906409c65ddb" />
-    <method v="2" />
-  </configuration>
-</component>
