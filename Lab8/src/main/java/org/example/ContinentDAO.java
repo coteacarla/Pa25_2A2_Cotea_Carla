@@ -6,15 +6,16 @@ import java.util.List;
 
 public class ContinentDAO {
 
-    public void create(Continent continent) throws SQLException {
-        Connection con = Database.getConnection();
+
+    public void create(Connection con, Continent continent) throws SQLException {
         try (PreparedStatement pstmt = con.prepareStatement(
-                "INSERT INTO continents (name) VALUES (?)", Statement.RETURN_GENERATED_KEYS)) {
+                "INSERT INTO continents ( name ) VALUES (?)", Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, continent.getName());
             pstmt.executeUpdate();
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     continent.setId(generatedKeys.getInt(1));
+                    System.out.println("Inserted continent with ID: " + continent.getId());
                 }
             }
         }
@@ -25,6 +26,7 @@ public class ContinentDAO {
         try (PreparedStatement stmt = con.prepareStatement(
                 "SELECT id, name FROM continents WHERE name = ?")) {
             stmt.setString(1, name);
+            con.commit();
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new Continent(rs.getInt("id"), rs.getString("name"));
