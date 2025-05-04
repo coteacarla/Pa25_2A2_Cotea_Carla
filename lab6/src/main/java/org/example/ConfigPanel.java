@@ -30,8 +30,8 @@ public class ConfigPanel extends JPanel {
 
         add(new JLabel("Player 1:"));
         add(player1Type);
-        add(new JLabel("Difficulty:"));
-        add(player1Difficulty);
+  //      add(new JLabel("Difficulty:"));
+   //     add(player1Difficulty);
 
         add(new JLabel("Player 2:"));
         add(player2Type);

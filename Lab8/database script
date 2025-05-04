@@ -1,18 +1,30 @@
-drop table countries;
-drop table continents;
+DROP TABLE IF EXISTS citys;
+DROP TABLE IF EXISTS countries;
+DROP TABLE IF EXISTS continents;
+
 
 CREATE TABLE continents (
-    id NUMBER,
-    name VARCHAR2(100) NOT NULL
+                            id SERIAL PRIMARY KEY,
+                            name VARCHAR(100) NOT NULL
 );
 
 
 CREATE TABLE countries (
-    id NUMBER,
-    name VARCHAR2(100) NOT NULL,
-    code VARCHAR2(5),
-    continent_id NUMBER
+                           id SERIAL PRIMARY KEY,
+                           name VARCHAR(100) NOT NULL,
+                           code VARCHAR(5) NOT NULL,
+                           continent_id INTEGER,
+                           CONSTRAINT fk_continent FOREIGN KEY (continent_id) REFERENCES continents(id)
 );
 
 
+CREATE TABLE cities (
+                       id SERIAL PRIMARY KEY,
+                       country VARCHAR(100) NOT NULL,
+                       name VARCHAR(100) NOT NULL,
+                       capital BOOLEAN,
+                       latitude NUMERIC(9, 6),
+                       longitude NUMERIC(9, 6)
+);
 
+SELECT * FROM continents;

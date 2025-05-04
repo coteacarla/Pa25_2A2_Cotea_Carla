@@ -1,30 +1,25 @@
 package org.example;
+
 import java.sql.*;
 
 public class Main {
-    public static void main(String args[]) throws SQLException {
-        try {
-            var continents = new ContinentDAO();
-            continents.create("Europe");
-            Database.getConnection().commit();
-            var countries = new CountryDAO();
-            int europeId = continents.findByName("Europe");
-            countries.create("Romania", europeId);
-            countries.create("Ukraine", europeId);
-            Database.getConnection().commit();
+    public static void main(String args[]) {
+        try (Connection con = Database.getConnection()) {
+            con.setAutoCommit(false);
 
-            Connection con = Database.getConnection();
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("select name from countries where continent_id='" + europeId + "'");
-                while (rs.next()) {
-                    System.out.println(rs.getString("name"));
-                }
+            Continent europe = new Continent(0, "Europe");
+            ContinentDAO continentDAO = new ContinentDAO();
+            continentDAO.create(europe);
+            con.commit();
 
-            Database.getConnection().close();
 
         } catch (SQLException e) {
-            System.err.println(e);
-            Database.getConnection().rollback();
+            System.err.println("Database operation failed: " + e.getMessage());
+            try {
+                Database.getConnection().rollback();
+            } catch (SQLException rollbackEx) {
+                System.err.println("Rollback failed: " + rollbackEx.getMessage());
+            }
         }
     }
 }

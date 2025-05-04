@@ -1,36 +1,62 @@
 package org.example;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContinentDAO {
 
-    public void create(String name) throws SQLException {
+    public void create(Continent continent) throws SQLException {
         Connection con = Database.getConnection();
-        try (
-            PreparedStatement pstmt = con.prepareStatement(
-                    "INSERT INTO continents ( name ) VALUES (?)"
-            )){
-            pstmt.setString(1, name);
+        try (PreparedStatement pstmt = con.prepareStatement(
+                "INSERT INTO continents (name) VALUES (?)", Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, continent.getName());
             pstmt.executeUpdate();
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    continent.setId(generatedKeys.getInt(1));
+                }
+            }
         }
     }
 
-    public Integer findByName(String name) throws SQLException {
+    public Continent findByName(String name) throws SQLException {
         Connection con = Database.getConnection();
-        try (Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery(
-                     "select id from continents where name='" + name + "'")) {
-            return rs.next() ? rs.getInt(1) : null;
+        try (PreparedStatement stmt = con.prepareStatement(
+                "SELECT id, name FROM continents WHERE name = ?")) {
+            stmt.setString(1, name);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Continent(rs.getInt("id"), rs.getString("name"));
+                }
+            }
         }
-    }
-    public String findById(int id) throws SQLException {
-        Connection con = Database.getConnection();
-        try (Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery(
-                "select name from continents where id='" + id +"'")) {
-            return rs.next() ? rs.getString(1) : null;
-        }
+        return null;
     }
 
+    public Continent findById(int id) throws SQLException {
+        Connection con = Database.getConnection();
+        try (PreparedStatement stmt = con.prepareStatement(
+                "SELECT id, name FROM continents WHERE id = ?")) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Continent(rs.getInt("id"), rs.getString("name"));
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<Continent> findAll() throws SQLException {
+        Connection con = Database.getConnection();
+        List<Continent> continents = new ArrayList<>();
+        try (Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT id, name FROM continents")) {
+            while (rs.next()) {
+                continents.add(new Continent(rs.getInt("id"), rs.getString("name")));
+            }
+        }
+        return continents;
+    }
 }
-
