@@ -35,7 +35,7 @@ public class Database {
             e.printStackTrace();
             throw new RuntimeException("Failed to initialize HikariCP connection pool", e);
         }
-    }
+    }///
 
     public static void closeConnection(Connection connection) throws SQLException {
         if (connection != null) {
