@@ -1,25 +1,17 @@
 package org.example;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class Main {
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         try (Connection con = Database.getConnection()) {
-            con.setAutoCommit(false);
-
-            Continent europe = new Continent(0, "Europe");
-            ContinentDAO continentDAO = new ContinentDAO();
-            continentDAO.create(europe);
-            con.commit();
-
+            DistanceCalculator.printDistanceBetweenCities(con, "London", "Paris");
+            DistanceCalculator.printDistanceBetweenCities(con, "Tokyo", "Bucharest");
 
         } catch (SQLException e) {
-            System.err.println("Database operation failed: " + e.getMessage());
-            try {
-                Database.getConnection().rollback();
-            } catch (SQLException rollbackEx) {
-                System.err.println("Rollback failed: " + rollbackEx.getMessage());
-            }
+            System.err.println("Database connection failed: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

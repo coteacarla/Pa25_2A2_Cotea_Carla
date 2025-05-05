@@ -6,10 +6,9 @@ import java.util.List;
 
 public class CityDAO {
 
-    public void create(City city) throws SQLException {
-        Connection con = Database.getConnection();
+    public void create(Connection con, City city) throws SQLException {
         try (PreparedStatement pstmt = con.prepareStatement(
-                "INSERT INTO citys (name, country, capital, latitude, longitude) VALUES (?, ?, ?, ?, ?)",
+                "INSERT INTO cities (name, country, capital, latitude, longitude) VALUES (?, ?, ?, ?, ?)",
                 Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, city.getName());
             pstmt.setString(2, city.getCountry());
@@ -27,7 +26,7 @@ public class CityDAO {
 
     public City findByName(String name) throws SQLException {
         Connection con = Database.getConnection();
-        try (PreparedStatement stmt = con.prepareStatement("SELECT * FROM citys WHERE name = ?")) {
+        try (PreparedStatement stmt = con.prepareStatement("SELECT * FROM cities WHERE name = ?")) {
             stmt.setString(1, name);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -47,7 +46,7 @@ public class CityDAO {
 
     public City findById(int id) throws SQLException {
         Connection con = Database.getConnection();
-        try (PreparedStatement stmt = con.prepareStatement("SELECT * FROM citys WHERE id = ?")) {
+        try (PreparedStatement stmt = con.prepareStatement("SELECT * FROM cities WHERE id = ?")) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -69,7 +68,7 @@ public class CityDAO {
         Connection con = Database.getConnection();
         List<City> cities = new ArrayList<>();
         try (Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM citys")) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM cities")) {
             while (rs.next()) {
                 cities.add(new City(
                         rs.getInt("id"),
