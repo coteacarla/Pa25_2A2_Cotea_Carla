@@ -6,8 +6,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class Database {
-    private static final String URL ="jdbc:postgresql://localhost:5432/postgres";
-    private static final String USER = "postgres";
+    private static final String URL ="jdbc:oracle:thin:@localhost:1521:xe";
+    private static final String USER = "Student";
     private static final String PASSWORD = "STUDENT";
     private static HikariDataSource dataSource;
 
@@ -22,12 +22,18 @@ public class Database {
     }
 
     private static void createDataSource() {
-
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(URL);
         config.setUsername(USER);
         config.setPassword(PASSWORD);
-        config.setAutoCommit(false);
+
+        // You can configure other pool settings here, such as:
+        // config.setMaximumPoolSize(10); // Maximum number of connections in the pool
+        // config.setMinimumIdle(5);    // Minimum number of idle connections
+        // config.setMaxLifetime(1800000); // Maximum lifetime of a connection (milliseconds)
+        // config.setConnectionTimeout(5000); // Maximum time to wait for a connection (milliseconds)
+        // config.setIdleTimeout(600000);    // Maximum time a connection can sit idle (milliseconds)
+        config.setAutoCommit(false); // Set default auto-commit behavior
 
         try {
             dataSource = new HikariDataSource(config);
@@ -39,13 +45,13 @@ public class Database {
 
     public static void closeConnection(Connection connection) throws SQLException {
         if (connection != null) {
-            connection.close();
+            connection.close(); // Return the connection to the pool
         }
     }
 
     public static void shutdownDataSource() {
         if (dataSource != null) {
-            dataSource.close();
+            dataSource.close(); // Close all connections in the pool
         }
     }
 }

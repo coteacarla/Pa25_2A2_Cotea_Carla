@@ -6,7 +6,8 @@ import java.util.List;
 
 public class CountryDAO {
 
-    public void create(Connection con, Country country) throws SQLException {
+    public void create(Country country) throws SQLException {
+        Connection con = Database.getConnection();
         try (PreparedStatement pstmt = con.prepareStatement(
                 "INSERT INTO countries (name, code, continent_id) VALUES (?, ?, ?)",
                 Statement.RETURN_GENERATED_KEYS)) {
