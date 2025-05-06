@@ -1,0 +1,794 @@
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+new file mode 100644
+--- /dev/null	(date 1746538147102)
++++ b/.idea/misc.xml	(date 1746538147102)
+@@ -0,0 +1,14 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ExternalStorageConfigurationManager" enabled="true" />
++  <component name="MavenProjectsManager">
++    <option name="originalFiles">
++      <list>
++        <option value="$PROJECT_DIR$/pom.xml" />
++      </list>
++    </option>
++  </component>
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_23" default="true" project-jdk-name="openjdk-23" project-jdk-type="JavaSDK">
++    <output url="file://$PROJECT_DIR$/out" />
++  </component>
++</project>
+\ No newline at end of file
+Index: pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pom.xml b/pom.xml
+new file mode 100644
+--- /dev/null	(date 1746538147107)
++++ b/pom.xml	(date 1746538147107)
+@@ -0,0 +1,47 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project xmlns="http://maven.apache.org/POM/4.0.0"
++         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
++    <modelVersion>4.0.0</modelVersion>
++
++    <groupId>org.example</groupId>
++    <artifactId>Lab8</artifactId>
++    <version>1.0-SNAPSHOT</version>
++
++    <properties>
++        <maven.compiler.source>23</maven.compiler.source>
++        <maven.compiler.target>23</maven.compiler.target>
++        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
++    </properties>
++    <dependencies>
++        <dependency>
++            <groupId>com.oracle.database.jdbc</groupId>
++            <artifactId>ojdbc8</artifactId>
++            <version>19.8.0.0</version>
++        </dependency>
++
++        <dependency>
++            <groupId>com.oracle.database.jdbc</groupId>
++            <artifactId>ojdbc8</artifactId>
++            <version>19.3.0.0</version>
++        </dependency>
++        <dependency>
++            <groupId>org.postgresql</groupId>
++            <artifactId>postgresql</artifactId>
++            <version>42.7.3</version>
++        </dependency>
++
++        <dependency>
++            <groupId>org.eclipse.persistence</groupId>
++            <artifactId>eclipselink</artifactId>
++            <version>2.7.8</version>
++        </dependency>
++        <dependency>
++            <groupId>org.eclipse.persistence</groupId>
++            <artifactId>javax.persistence</artifactId>
++            <version>2.1.0</version>
++        </dependency>
++    </dependencies>
++
++
++</project>
+\ No newline at end of file
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+--- /dev/null	(date 1746538147096)
++++ b/.gitignore	(date 1746538147096)
+@@ -0,0 +1,38 @@
++target/
++!.mvn/wrapper/maven-wrapper.jar
++!**/src/main/**/target/
++!**/src/test/**/target/
++
++### IntelliJ IDEA ###
++.idea/modules.xml
++.idea/jarRepositories.xml
++.idea/compiler.xml
++.idea/libraries/
++*.iws
++*.iml
++*.ipr
++
++### Eclipse ###
++.apt_generated
++.classpath
++.factorypath
++.project
++.settings
++.springBeans
++.sts4-cache
++
++### NetBeans ###
++/nbproject/private/
++/nbbuild/
++/dist/
++/nbdist/
++/.nb-gradle/
++build/
++!**/src/main/**/build/
++!**/src/test/**/build/
++
++### VS Code ###
++.vscode/
++
++### Mac OS ###
++.DS_Store
+\ No newline at end of file
+Index: database script
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/database script b/database script
+new file mode 100644
+--- /dev/null	(date 1746538147105)
++++ b/database script	(date 1746538147105)
+@@ -0,0 +1,18 @@
++drop table countries;
++drop table continents;
++
++CREATE TABLE continents (
++    id NUMBER,
++    name VARCHAR2(100) NOT NULL
++);
++
++
++CREATE TABLE countries (
++    id NUMBER,
++    name VARCHAR2(100) NOT NULL,
++    code VARCHAR2(5),
++    continent_id NUMBER
++);
++
++
++
+Index: src/main/java/org/example/ContinentDAO.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/ContinentDAO.java b/src/main/java/org/example/ContinentDAO.java
+new file mode 100644
+--- /dev/null	(date 1746538147113)
++++ b/src/main/java/org/example/ContinentDAO.java	(date 1746538147113)
+@@ -0,0 +1,35 @@
++package org.example;
++
++import java.sql.*;
++
++public class ContinentDAO {
++
++    public void create(int id, String name) throws SQLException {
++        Connection con = Database.getConnection();
++        try (PreparedStatement pstmt = con.prepareStatement(
++                "INSERT INTO continents (id, name) VALUES (?, ?)")) {
++            pstmt.setInt(1, id);
++            pstmt.setString(2, name);
++            pstmt.executeUpdate();
++        }
++    }
++
++    public Integer findByName(String name) throws SQLException {
++        Connection con = Database.getConnection();
++        try (Statement stmt = con.createStatement();
++             ResultSet rs = stmt.executeQuery(
++                     "select id from continents where name='" + name + "'")) {
++            return rs.next() ? rs.getInt(1) : null;
++        }
++    }
++    public String findById(int id) throws SQLException {
++        Connection con = Database.getConnection();
++        try (Statement stmt = con.createStatement();
++        ResultSet rs = stmt.executeQuery(
++                "select name from continents where id='" + id +"'")) {
++            return rs.next() ? rs.getString(1) : null;
++        }
++    }
++
++}
++
+Index: src/main/java/org/example/Main.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/Main.java b/src/main/java/org/example/Main.java
+new file mode 100644
+--- /dev/null	(date 1746538147120)
++++ b/src/main/java/org/example/Main.java	(date 1746538147120)
+@@ -0,0 +1,32 @@
++package org.example;
++
++import org.example.entities.Continent;
++import org.example.repositories.ContinentRepository;
++
++import javax.persistence.EntityManager;
++import javax.persistence.EntityManagerFactory;
++import javax.persistence.Persistence;
++
++public class Main {
++    public static void main(String[] args) {
++        EntityManagerFactory emf = Persistence.createEntityManagerFactory("ExamplePU");
++        EntityManager em = emf.createEntityManager();
++
++        ContinentRepository continentRepo = new ContinentRepository(em);
++
++        // Create a new Continent
++        Continent continent = new Continent("Asia");
++        continentRepo.create(continent);
++
++        // Find Continent by ID
++        Continent foundContinent = continentRepo.findById(continent.getId());
++        System.out.println("Found Continent: " + foundContinent);
++
++        // Find continents by name pattern
++        System.out.println("Searching continents with 'A' in their name...");
++        continentRepo.findByName("A").forEach(System.out::println);
++
++        em.close();
++        emf.close();
++    }
++}
+Index: src/main/java/org/example/EntityManagerFactorySingleton.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/EntityManagerFactorySingleton.java b/src/main/java/org/example/EntityManagerFactorySingleton.java
+new file mode 100644
+--- /dev/null	(date 1746538147118)
++++ b/src/main/java/org/example/EntityManagerFactorySingleton.java	(date 1746538147118)
+@@ -0,0 +1,29 @@
++package org.example;
++
++import javax.persistence.EntityManagerFactory;
++import javax.persistence.Persistence;
++
++public class EntityManagerFactorySingleton {
++
++    private static EntityManagerFactory emf;
++
++    private EntityManagerFactorySingleton() {
++    }
++
++    public static EntityManagerFactory getEntityManagerFactory() {
++        if (emf == null) {
++            synchronized (EntityManagerFactorySingleton.class) {
++                if (emf == null) {
++                    emf = Persistence.createEntityManagerFactory("ExamplePU");
++                }
++            }
++        }
++        return emf;
++    }
++
++    public static void closeEntityManagerFactory() {
++        if (emf != null && emf.isOpen()) {
++            emf.close();
++        }
++    }
++}
+Index: src/main/java/org/example/Database.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/Database.java b/src/main/java/org/example/Database.java
+new file mode 100644
+--- /dev/null	(date 1746538147116)
++++ b/src/main/java/org/example/Database.java	(date 1746538147116)
+@@ -0,0 +1,36 @@
++package org.example;
++
++import java.sql.Connection;
++import java.sql.DriverManager;
++import java.sql.SQLException;
++
++public class Database {
++    private static final String URL ="jdbc:postgresql://localhost:5432/postgres";
++    private static final String USER = "postgres";
++    private static final String PASSWORD = "STUDENT";
++    private static Connection connection = null;
++
++    private Database() {
++    }
++
++    public static Connection getConnection() {
++       if(connection == null) {
++           createConnection();
++       }
++        return connection;
++    }
++
++    private static void createConnection() {
++        try {
++            connection = DriverManager.getConnection(URL, USER, PASSWORD);
++            connection.setAutoCommit(false);
++
++        } catch (Exception e) {
++            e.printStackTrace();
++        }
++    }
++    public static void closeConnection() throws SQLException {
++        connection.close();
++        connection = null;
++    }
++}
+\ No newline at end of file
+Index: src/main/java/org/example/CountryDAO.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/CountryDAO.java b/src/main/java/org/example/CountryDAO.java
+new file mode 100644
+--- /dev/null	(date 1746538147115)
++++ b/src/main/java/org/example/CountryDAO.java	(date 1746538147115)
+@@ -0,0 +1,41 @@
++package org.example;
++import java.sql.*;
++
++public class CountryDAO {
++
++    public void create(String name, String code, int continent_id) throws SQLException {
++        Connection con = Database.getConnection();
++        try (PreparedStatement pstmt = con.prepareStatement(
++                "INSERT INTO countries (name, code, continent_id) VALUES (?, ?, ?)")) {
++            pstmt.setString(1, name);
++            pstmt.setString(2, code);
++            pstmt.setInt(3, continent_id);
++            pstmt.executeUpdate();
++        }
++    }
++
++
++    public Integer findbyname(String name) throws SQLException {
++        Connection con=Database.getConnection();
++        try ( Statement stmt = con.createStatement()) {
++            ResultSet rs = stmt.executeQuery("select * from countries where name = '" + name + "'");
++            if (rs.next()) {
++                return rs.getInt("id");
++            }
++            return null;
++        }
++    }
++
++    public String findbyid(Integer id) throws SQLException {
++        Connection con=Database.getConnection();
++        try ( Statement stmt = con.createStatement();
++            ResultSet rs = stmt.executeQuery("select * from countries where id = '" + id + "'"))
++        {
++            if (rs.next()) {
++                return rs.getString("name");
++            }
++            return null;
++        }
++    }
++}
++
+Index: src/main/java/org/example/entities/Country.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/entities/Country.java b/src/main/java/org/example/entities/Country.java
+new file mode 100644
+--- /dev/null	(date 1746538147125)
++++ b/src/main/java/org/example/entities/Country.java	(date 1746538147125)
+@@ -0,0 +1,82 @@
++package org.example.entities;
++
++import javax.persistence.*;
++import java.io.Serializable;
++
++@Entity
++@Table(name = "countries")
++@NamedQueries({
++        @NamedQuery(name = "Country.findAll",
++                query = "SELECT c FROM Country c ORDER BY c.name"),
++        @NamedQuery(name = "Country.findByContinent",
++                query = "SELECT c FROM Country c WHERE c.continent = ?1")
++})
++public class Country implements Serializable {
++
++    @Id
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    @Column(name = "id")
++    private Integer id;
++
++    @Column(name = "name")
++    private String name;
++
++    @Column(name = "code")
++    private String code;
++
++    @ManyToOne
++    @JoinColumn(name = "continent_id", referencedColumnName = "id", nullable = false)
++    private Continent continent;
++
++    // Constructors, Getters, Setters, and toString
++
++    public Country() {
++    }
++
++    public Country(String name, String code, Continent continent) {
++        this.name = name;
++        this.code = code;
++        this.continent = continent;
++    }
++
++    public Integer getId() {
++        return id;
++    }
++
++    public void setId(Integer id) {
++        this.id = id;
++    }
++
++    public String getName() {
++        return name;
++    }
++
++    public void setName(String name) {
++        this.name = name;
++    }
++
++    public String getCode() {
++        return code;
++    }
++
++    public void setCode(String code) {
++        this.code = code;
++    }
++
++    public Continent getContinent() {
++        return continent;
++    }
++
++    public void setContinent(Continent continent) {
++        this.continent = continent;
++    }
++
++    @Override
++    public String toString() {
++        return "Country{" +
++                "id=" + id +
++                ", name='" + name + '\'' +
++                ", code='" + code + '\'' +
++                '}';
++    }
++}
+Index: src/main/java/org/example/entities/City.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/entities/City.java b/src/main/java/org/example/entities/City.java
+new file mode 100644
+--- /dev/null	(date 1746538147121)
++++ b/src/main/java/org/example/entities/City.java	(date 1746538147121)
+@@ -0,0 +1,70 @@
++package org.example.entities;
++
++import javax.persistence.*;
++import java.io.Serializable;
++
++@Entity
++@Table(name = "cities")
++@NamedQueries({
++        @NamedQuery(name = "City.findAll",
++                query = "SELECT c FROM City c ORDER BY c.name"),
++        @NamedQuery(name = "City.findByCountry",
++                query = "SELECT c FROM City c WHERE c.country = ?1")
++})
++public class City implements Serializable {
++
++    @Id
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    @Column(name = "id")
++    private Integer id;
++
++    @Column(name = "name")
++    private String name;
++
++    @ManyToOne
++    @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
++    private Country country;
++
++    // Constructors, Getters, Setters, and toString
++
++    public City() {
++    }
++
++    public City(String name, Country country) {
++        this.name = name;
++        this.country = country;
++    }
++
++    public Integer getId() {
++        return id;
++    }
++
++    public void setId(Integer id) {
++        this.id = id;
++    }
++
++    public String getName() {
++        return name;
++    }
++
++    public void setName(String name) {
++        this.name = name;
++    }
++
++    public Country getCountry() {
++        return country;
++    }
++
++    public void setCountry(Country country) {
++        this.country = country;
++    }
++
++    @Override
++    public String toString() {
++        return "City{" +
++                "id=" + id +
++                ", name='" + name + '\'' +
++                ", country=" + country +
++                '}';
++    }
++}
+Index: src/main/java/org/example/entities/Continent.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/entities/Continent.java b/src/main/java/org/example/entities/Continent.java
+new file mode 100644
+--- /dev/null	(date 1746538147124)
++++ b/src/main/java/org/example/entities/Continent.java	(date 1746538147124)
+@@ -0,0 +1,69 @@
++package org.example.entities;
++
++import javax.persistence.*;
++import java.io.Serializable;
++import java.util.List;
++
++import org.example.entities.Country;
++
++@Entity
++@Table(name = "continents")
++@NamedQueries({
++        @NamedQuery(name = "Continent.findAll",
++                query = "SELECT e FROM Continent e WHERE e.name LIKE ?1 ORDER BY e.name")
++
++})
++public class Continent implements Serializable {
++
++    @Id
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    @Column(name = "id")
++    private Integer id;
++
++    @Column(name = "name")
++    private String name;
++
++    @OneToMany(mappedBy = "continent", fetch = FetchType.LAZY)
++    private List<Country> countries;
++
++    // Constructors, Getters, Setters, and toString
++
++    public Continent() {
++    }
++
++    public Continent(String name) {
++        this.name = name;
++    }
++
++    public Integer getId() {
++        return id;
++    }
++
++    public void setId(Integer id) {
++        this.id = id;
++    }
++
++    public String getName() {
++        return name;
++    }
++
++    public void setName(String name) {
++        this.name = name;
++    }
++
++    public List<Country> getCountries() {
++        return countries;
++    }
++
++    public void setCountries(List<Country> countries) {
++        this.countries = countries;
++    }
++
++    @Override
++    public String toString() {
++        return "Continent{" +
++                "id=" + id +
++                ", name='" + name + '\'' +
++                '}';
++    }
++}
+Index: src/main/java/org/example/repositories/ContinentRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/repositories/ContinentRepository.java b/src/main/java/org/example/repositories/ContinentRepository.java
+new file mode 100644
+--- /dev/null	(date 1746538147127)
++++ b/src/main/java/org/example/repositories/ContinentRepository.java	(date 1746538147127)
+@@ -0,0 +1,30 @@
++package org.example.repositories;
++
++import org.example.entities.Continent;
++
++import javax.persistence.EntityManager;
++import java.util.List;
++
++public class ContinentRepository {
++    private EntityManager em;
++
++    public ContinentRepository(EntityManager em) {
++        this.em = em;
++    }
++
++    public void create(Continent continent) {
++        em.getTransaction().begin();
++        em.persist(continent);
++        em.getTransaction().commit();
++    }
++
++    public Continent findById(Integer id) {
++        return em.find(Continent.class, id);
++    }
++
++    public List<Continent> findByName(String name) {
++        return em.createQuery("SELECT c FROM Continent c WHERE c.name LIKE :name", Continent.class)
++                .setParameter("name", "%" + name + "%")
++                .getResultList();
++    }
++}
+Index: src/main/resources/META-INF/persistence.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/META-INF/persistence.xml b/src/main/resources/META-INF/persistence.xml
+new file mode 100644
+--- /dev/null	(date 1746538147130)
++++ b/src/main/resources/META-INF/persistence.xml	(date 1746538147130)
+@@ -0,0 +1,28 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
++             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
++             http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
++             version="2.1">
++
++    <persistence-unit name="ExamplePU" transaction-type="RESOURCE_LOCAL">
++        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
++        <exclude-unlisted-classes>false</exclude-unlisted-classes>
++
++        <class>org.example.entities.Continent</class>
++        <class>org.example.entities.City</class>
++        <class>org.example.entities.Country</class>
++
++        <properties>
++            <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
++            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/postgres"/>
++            <property name="javax.persistence.jdbc.user" value="postgres"/>
++            <property name="javax.persistence.jdbc.password" value="STUDENT"/>
++
++            <!-- Optional: EclipseLink logging and DDL generation -->
++            <property name="eclipselink.logging.level" value="FINE"/>
++            <property name="eclipselink.ddl-generation" value="create-tables"/>
++        </properties>
++    </persistence-unit>
++
++</persistence>
+Index: .idea/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/.gitignore b/.idea/.gitignore
+new file mode 100644
+--- /dev/null	(date 1746538147098)
++++ b/.idea/.gitignore	(date 1746538147098)
+@@ -0,0 +1,8 @@
++# Default ignored files
++/shelf/
++/workspace.xml
++# Editor-based HTTP Client requests
++/httpRequests/
++# Datasource local storage ignored files
++/dataSources/
++/dataSources.local.xml
+Index: .idea/encodings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/encodings.xml b/.idea/encodings.xml
+new file mode 100644
+--- /dev/null	(date 1746538147101)
++++ b/.idea/encodings.xml	(date 1746538147101)
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="Encoding">
++    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
++    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/dataSources.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/dataSources.xml b/.idea/dataSources.xml
+new file mode 100644
+--- /dev/null	(date 1746538147099)
++++ b/.idea/dataSources.xml	(date 1746538147099)
+@@ -0,0 +1,17 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
++    <data-source source="LOCAL" name="postgres@localhost" uuid="006d58e2-da8c-4214-a384-d83bf9d5567a">
++      <driver-ref>postgresql</driver-ref>
++      <synchronize>true</synchronize>
++      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
++      <jdbc-url>jdbc:postgresql://localhost:5432/postgres</jdbc-url>
++      <jdbc-additional-properties>
++        <property name="com.intellij.clouds.kubernetes.db.host.port" />
++        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
++        <property name="com.intellij.clouds.kubernetes.db.container.port" />
++      </jdbc-additional-properties>
++      <working-dir>$ProjectFileDir$</working-dir>
++    </data-source>
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+new file mode 100644
+--- /dev/null	(date 1746538147104)
++++ b/.idea/vcs.xml	(date 1746538147104)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
++  </component>
++</project>
+\ No newline at end of file
