@@ -25,7 +25,6 @@ public class City implements Serializable {
     @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
     private Country country;
 
-    // Constructors, Getters, Setters, and toString
 
     public City() {
     }
