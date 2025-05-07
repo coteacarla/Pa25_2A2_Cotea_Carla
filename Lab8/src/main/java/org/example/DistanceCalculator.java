@@ -1,5 +1,8 @@
 package org.example;
 
+import org.example.Class.City;
+import org.example.DAO.CityDAO;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
