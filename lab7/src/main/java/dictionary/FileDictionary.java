@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class FileDictionary implements Dictionary {
     private Set<String> words;
@@ -22,5 +24,9 @@ public class FileDictionary implements Dictionary {
     @Override
     public boolean isWord(String word) {
         return words.contains(word.toLowerCase());
+    }
+
+    public List<String> lookup(String prefix){
+        return words.parallelStream().filter(word->word.startsWith(prefix.toLowerCase())).collect(Collectors.toList());
     }
 }
