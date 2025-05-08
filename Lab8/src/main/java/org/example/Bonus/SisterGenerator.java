@@ -1,4 +1,6 @@
-package org.example;
+package org.example.Bonus;
+
+import org.example.Database;
 
 import java.sql.*;
 import java.util.*;
