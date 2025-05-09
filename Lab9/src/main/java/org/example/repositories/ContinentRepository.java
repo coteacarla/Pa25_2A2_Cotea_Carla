@@ -4,21 +4,10 @@ import jakarta.persistence.*;
 
 import java.util.List;
 
-public class ContinentRepository {
-    private EntityManager em;
+public class ContinentRepository extends DataRepository {
 
     public ContinentRepository(EntityManager em) {
-        this.em = em;
-    }
-
-    public void create(Continent continent) {
-        em.getTransaction().begin();
-        em.persist(continent);
-        em.getTransaction().commit();
-    }
-
-    public Continent findById(Integer id) {
-        return em.find(Continent.class, id);
+        super(em, Continent.class);
     }
 
     public List<Continent> findByName(String name) {
