@@ -54,7 +54,7 @@ public class CityGraphProcessor {
         return connectedComponents;
     }
 
-    // Main method to test
+
     public static void main(String[] args) {
         CityGraphProcessor processor = new CityGraphProcessor();
 

@@ -60,12 +60,12 @@ public class GraphPanel extends JPanel {
     }
 
     private int transformX(double longitude) {
-        // Scale longitude to fit panel width
+
         return (int) ((longitude + 180) * (getWidth() / 360.0));
     }
 
     private int transformY(double latitude) {
-        // Scale latitude to fit panel height (inverted Y-axis)
+
         return (int) ((90 - latitude) * (getHeight() / 180.0));
     }
 }

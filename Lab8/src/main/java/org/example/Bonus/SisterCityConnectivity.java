@@ -26,7 +26,6 @@ public class SisterCityConnectivity {
 
             Graph<Integer, DefaultEdge> sisterCityGraph = createGraph(adjacencyList);
 
-            // Find maximal 2-connected sets using getBlocks()
             BiconnectivityInspector<Integer, DefaultEdge> bccInspector = new BiconnectivityInspector<>(sisterCityGraph);
             List<Set<Integer>> bccSets = new ArrayList<>();
             for (Graph<Integer, DefaultEdge> component : bccInspector.getBlocks()) {
