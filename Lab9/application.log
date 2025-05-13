@@ -1,0 +1,30 @@
+mai 09, 2025 10:24:31 P.M. org.example.Main main
+INFO: Creating new continent: Asia
+mai 09, 2025 10:24:31 P.M. org.example.repositories.DataRepository persist
+INFO: Persisted: Continent{id=10, name='Asia'}
+mai 09, 2025 10:24:31 P.M. org.example.Main main
+INFO: Fetching continent by ID: 10
+mai 09, 2025 10:24:31 P.M. org.example.Main main
+SEVERE: Error in main: Cannot invoke "jakarta.persistence.EntityManager.find(java.lang.Class, Object)" because "this.em" is null
+mai 09, 2025 10:26:46 P.M. org.example.Main main
+INFO: Creating new continent: Asia
+mai 09, 2025 10:26:46 P.M. org.example.repositories.DataRepository persist
+INFO: Persisted: Continent{id=11, name='Asia'}
+mai 09, 2025 10:26:46 P.M. org.example.Main main
+INFO: Fetching continent by ID: 11
+mai 09, 2025 10:26:46 P.M. org.example.repositories.DataRepository logExecutionTime
+INFO: findById took 11 ms
+mai 09, 2025 10:26:46 P.M. org.example.Main main
+INFO: Searching continents with 'A' in their name...
+mai 09, 2025 10:26:46 P.M. org.example.Main main
+SEVERE: Error in main: Cannot invoke "jakarta.persistence.EntityManager.createQuery(String, java.lang.Class)" because "this.em" is null
+mai 09, 2025 10:29:41 P.M. org.example.Main main
+INFO: Creating new continent: Asia
+mai 09, 2025 10:29:41 P.M. org.example.repositories.DataRepository persist
+INFO: Persisted: Continent{id=12, name='Asia'}
+mai 09, 2025 10:29:41 P.M. org.example.Main main
+INFO: Fetching continent by ID: 12
+mai 09, 2025 10:29:41 P.M. org.example.repositories.DataRepository logExecutionTime
+INFO: findById took 11 ms
+mai 09, 2025 10:29:41 P.M. org.example.Main main
+INFO: Searching continents with 'A' in their name...
