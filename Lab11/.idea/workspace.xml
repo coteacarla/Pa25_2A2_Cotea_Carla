@@ -4,17 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7d01a774-106c-4529-99b5-1041be4c62c9" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../Lab9/src/main/java/org/example/dao/DAOFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Lab9/src/main/java/org/example/dao/JdbcDAOFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Lab9/src/main/java/org/example/dao/JpaDAOFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Lab9/src/main/resources/config.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Lab9/application.log" beforeDir="false" afterPath="$PROJECT_DIR$/../Lab9/application.log" afterDir="false" />
-    </list>
+    <list default="true" id="4ba73bcd-7ee7-4f18-b7c5-60ec28504adf" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -23,37 +22,54 @@
       </list>
     </option>
   </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
-  </component>
   <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 1
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 2
 }</component>
-  <component name="ProjectId" id="2wjbM3dM0XMIAzH6tIpKSVdY1qO" />
+  <component name="ProjectId" id="2xENOC3fviF168OVmOpLOAGZk2W" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Build Lab11.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.C:/Users/User/aaa/Pa25_2A2_Cotea_Carla/Lab11/build.gradle.executor&quot;: &quot;Run&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;Spring Boot.Lab11Application.executor&quot;: &quot;Run&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/User/aaa/Pa25_2A2_Cotea_Carla/Lab11/src/main/java/org/example&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
-  },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
-    ]
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\User\aaa\Pa25_2A2_Cotea_Carla\Lab11\src\main\java\org\example" />
+      <recent name="C:\Users\User\aaa\Pa25_2A2_Cotea_Carla\Lab11\src\main" />
+      <recent name="C:\Users\User\aaa\Pa25_2A2_Cotea_Carla\Lab11\src" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="Lab11Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="Lab11.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="org.example.lab11.Lab11Application" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -65,21 +81,14 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="7d01a774-106c-4529-99b5-1041be4c62c9" name="Changes" comment="" />
-      <created>1746557879116</created>
+      <changelist id="4ba73bcd-7ee7-4f18-b7c5-60ec28504adf" name="Changes" comment="" />
+      <created>1747499240666</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1746557879116</updated>
-      <workItem from="1746557880214" duration="1166000" />
-      <workItem from="1746594590770" duration="4300000" />
-      <workItem from="1746799965559" duration="5977000" />
-      <workItem from="1747157987050" duration="902000" />
-      <workItem from="1747198597655" duration="759000" />
-      <workItem from="1747409132091" duration="4000" />
-      <workItem from="1747409171997" duration="3777000" />
-      <workItem from="1747495392975" duration="470000" />
-      <workItem from="1747498966006" duration="27000" />
-      <workItem from="1747499009227" duration="243000" />
+      <updated>1747499240666</updated>
+      <workItem from="1747499242718" duration="553000" />
+      <workItem from="1747501039848" duration="3959000" />
+      <workItem from="1747554241595" duration="2766000" />
     </task>
     <servers />
   </component>
