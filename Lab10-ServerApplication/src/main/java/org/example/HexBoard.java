@@ -82,5 +82,17 @@ public class HexBoard {
         return sb.toString();
     }
 
+    public boolean isCellEmpty(int i, int j) {
+            return board[i][j] == 0;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public char get(int x, int y) {
+        return board[x][y];
+    }
+
 }
 

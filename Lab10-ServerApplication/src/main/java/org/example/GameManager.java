@@ -17,7 +17,10 @@ public class GameManager {
         try {
             switch (cmd) {
                 case "create":
-                    return createGame(socket);
+                        if (parts.length == 3 && parts[1].equalsIgnoreCase("vs") && parts[2].equalsIgnoreCase("ai")) {
+                            return createGameVsAI(socket);
+                        }
+                        return createGame(socket);
                 case "join":
                     if (parts.length < 2) return "Usage: join <gameId>";
                     return joinGame(parts[1], socket);
@@ -83,5 +86,19 @@ public class GameManager {
         return result;
     }
 
+    private String createGameVsAI(Socket socket) {
+        String gameId = "game" + (++gameCounter);
+        Game game = new Game(gameId);
+
+        Player human = new Player(socket, 'X');
+        AIPlayer ai = new AIPlayer('O');
+
+        game.setPlayer1(human);
+        game.setPlayer2(ai);
+        games.put(gameId, game);
+        playerSockets.put(socket, human);
+
+        return "Game vs AI created with ID: " + gameId;
+    }
 
 }

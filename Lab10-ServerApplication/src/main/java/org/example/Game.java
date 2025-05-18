@@ -27,14 +27,30 @@ public class Game {
     }
 
     public String makeMove(Player p, int x, int y) {
+
         if (p != currentTurn) return "Not your turn.";
         if (!board.placeMove(x, y, p.getSymbol())) return "Invalid move.";
+        if (board.checkWin(p.getSymbol())) {
+            return "Player " + p.getSymbol() + " wins!";
+        }
 
-
-        if (board.checkWin(p.getSymbol())) return "Player " + p.getSymbol() + " wins!";
         currentTurn = (currentTurn == player1) ? player2 : player1;
+
+        if (currentTurn instanceof AIPlayer) {
+            AIPlayer ai = (AIPlayer) currentTurn;
+            int[] move = ai.decideMove(board);
+
+            if (move != null && board.placeMove(move[0], move[1], ai.getSymbol())) {
+                if (board.checkWin(ai.getSymbol())) {
+                    return "AI (" + ai.getSymbol() + ") wins!";
+                }
+            }
+            currentTurn = player1;
+        }
+
         return "Move accepted.";
     }
+
 
     public void startTimers() {
         startTimer(player1, timer1);
