@@ -22,15 +22,15 @@ public class City implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
-    private Country country;
+
+    @Column(name = "country")
+    private String country;
 
 
     public City() {
     }
 
-    public City(String name, Country country) {
+    public City(String name, String country) {
         this.name = name;
         this.country = country;
     }
@@ -51,11 +51,11 @@ public class City implements Serializable {
         this.name = name;
     }
 
-    public Country getCountry() {
+    public String getCountry() {
         return country;
     }
 
-    public void setCountry(Country country) {
+    public void setCountry(String country) {
         this.country = country;
     }
 
