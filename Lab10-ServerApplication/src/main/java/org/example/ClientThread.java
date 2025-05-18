@@ -1,36 +1,32 @@
 package org.example;
+
 import java.io.*;
 import java.net.Socket;
 
 public class ClientThread extends Thread {
     private Socket socket;
-    private GameServer server;
 
-    public ClientThread(Socket socket, GameServer server) {
+    public ClientThread(Socket socket) {
         this.socket = socket;
-        this.server = server;
     }
 
     public void run() {
-        try (
-                BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
-        ) {
-            String request = input.readLine();
-            if ("stop".equalsIgnoreCase(request)) {
-                output.println("Server stopped");
-                server.stopServer();
-            } else {
-                output.println("Server received the request: " + request);
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+
+            String line;
+            while ((line = in.readLine()) != null) {
+                if (line.equalsIgnoreCase("stop")) {
+                    out.println("Server stopped");
+                    GameServer.stopServer();
+                    break;
+                } else {
+                    String response = GameServer.gameManager.processCommand(line, socket);
+                    out.println(response);
+                }
             }
         } catch (IOException e) {
-            System.err.println("Client error: " + e.getMessage());
-        } finally {
-            try {
-                socket.close();
-            } catch (IOException e) {
-                System.err.println("Could not close socket: " + e.getMessage());
-            }
+            System.out.println("Client disconnected.");
         }
     }
 }
