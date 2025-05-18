@@ -1,4 +1,4 @@
-package org.example.Entities;
+package com.example.lab11.entities;
 
 import jakarta.persistence.*;
 
@@ -24,13 +24,13 @@ public class City implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
-    private org.example.Entities.Country country;
+    private Country country;
 
 
     public City() {
     }
 
-    public City(String name, org.example.Entities.Country country) {
+    public City(String name, Country country) {
         this.name = name;
         this.country = country;
     }
@@ -51,11 +51,11 @@ public class City implements Serializable {
         this.name = name;
     }
 
-    public org.example.Entities.Country getCountry() {
+    public Country getCountry() {
         return country;
     }
 
-    public void setCountry(org.example.Entities.Country country) {
+    public void setCountry(Country country) {
         this.country = country;
     }
 

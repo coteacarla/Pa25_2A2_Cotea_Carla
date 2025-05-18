@@ -1,4 +1,4 @@
-package org.example.lab11;
+package com.example.lab11;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

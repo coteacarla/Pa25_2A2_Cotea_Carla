@@ -1,4 +1,5 @@
-package org.example.Entities;
+package com.example.lab11.entities;
+
 
 import jakarta.persistence.*;
 
@@ -27,14 +28,14 @@ public class Country implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "continent_id", referencedColumnName = "id", nullable = false)
-    private org.example.entities.Continent continent;
+    private Continent continent;
 
     // Constructors, Getters, Setters, and toString
 
     public Country() {
     }
 
-    public Country(String name, String code, org.example.entities.Continent continent) {
+    public Country(String name, String code, Continent continent) {
         this.name = name;
         this.code = code;
         this.continent = continent;
@@ -64,11 +65,11 @@ public class Country implements Serializable {
         this.code = code;
     }
 
-    public org.example.entities.Continent getContinent() {
+    public Continent getContinent() {
         return continent;
     }
 
-    public void setContinent(org.example.entities.Continent continent) {
+    public void setContinent(Continent continent) {
         this.continent = continent;
     }
 

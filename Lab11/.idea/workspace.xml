@@ -4,67 +4,51 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ba73bcd-7ee7-4f18-b7c5-60ec28504adf" name="Changes" comment="" />
+    <list default="true" id="30ff08c8-9b94-414a-befc-0d0221e69ab1" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExternalProjectsData">
-    <projectState path="$PROJECT_DIR$">
-      <ProjectState />
-    </projectState>
-  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
-  <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 2
-}</component>
-  <component name="ProjectId" id="2xENOC3fviF168OVmOpLOAGZk2W" />
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="2xGNX4obzaQkpH93OavPZQoDFlr" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.Build Lab11.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.C:/Users/User/aaa/Pa25_2A2_Cotea_Carla/Lab11/build.gradle.executor&quot;: &quot;Run&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;Spring Boot.Lab11Application.executor&quot;: &quot;Run&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/User/aaa/Pa25_2A2_Cotea_Carla/Lab11/src/main/java/org/example&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "Spring Boot.Lab11Application.executor": "Run",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/User/ajutor/lab11",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\User\aaa\Pa25_2A2_Cotea_Carla\Lab11\src\main\java\org\example" />
-      <recent name="C:\Users\User\aaa\Pa25_2A2_Cotea_Carla\Lab11\src\main" />
-      <recent name="C:\Users\User\aaa\Pa25_2A2_Cotea_Carla\Lab11\src" />
-    </key>
-  </component>
+}]]></component>
   <component name="RunManager">
     <configuration name="Lab11Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <module name="Lab11.main" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="org.example.lab11.Lab11Application" />
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="lab11" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.lab11.Lab11Application" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -81,14 +65,12 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="4ba73bcd-7ee7-4f18-b7c5-60ec28504adf" name="Changes" comment="" />
-      <created>1747499240666</created>
+      <changelist id="30ff08c8-9b94-414a-befc-0d0221e69ab1" name="Changes" comment="" />
+      <created>1747560486295</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1747499240666</updated>
-      <workItem from="1747499242718" duration="553000" />
-      <workItem from="1747501039848" duration="3959000" />
-      <workItem from="1747554241595" duration="2766000" />
+      <updated>1747560486295</updated>
+      <workItem from="1747560487346" duration="2216000" />
     </task>
     <servers />
   </component>

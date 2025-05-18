@@ -1,11 +1,9 @@
-package org.example.entities;
+package com.example.lab11.entities;
 
 import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.List;
-
-import org.example.Entities.Country;
 
 @Entity
 @Table(name = "continents")
