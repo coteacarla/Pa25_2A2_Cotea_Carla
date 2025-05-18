@@ -28,3 +28,23 @@ mai 09, 2025 10:29:41 P.M. org.example.repositories.DataRepository logExecutionT
 INFO: findById took 11 ms
 mai 09, 2025 10:29:41 P.M. org.example.Main main
 INFO: Searching continents with 'A' in their name...
+mai 13, 2025 8:44:59 P.M. org.example.Main main
+INFO: Creating new continent: Asia
+mai 13, 2025 8:44:59 P.M. org.example.repositories.DataRepository persist
+INFO: Persisted: Continent{id=13, name='Asia'}
+mai 13, 2025 8:44:59 P.M. org.example.Main main
+INFO: Fetching continent by ID: 13
+mai 13, 2025 8:44:59 P.M. org.example.repositories.DataRepository logExecutionTime
+INFO: findById took 14 ms
+mai 13, 2025 8:44:59 P.M. org.example.Main main
+INFO: Searching continents with 'A' in their name...
+mai 14, 2025 8:31:06 A.M. org.example.Main main
+INFO: Creating new continent: Asia
+mai 14, 2025 8:31:06 A.M. org.example.repositories.DataRepository persist
+INFO: Persisted: Continent{id=14, name='Asia'}
+mai 14, 2025 8:31:06 A.M. org.example.Main main
+INFO: Fetching continent by ID: 14
+mai 14, 2025 8:31:06 A.M. org.example.repositories.DataRepository logExecutionTime
+INFO: findById took 4 ms
+mai 14, 2025 8:31:06 A.M. org.example.Main main
+INFO: Searching continents with 'A' in their name...
