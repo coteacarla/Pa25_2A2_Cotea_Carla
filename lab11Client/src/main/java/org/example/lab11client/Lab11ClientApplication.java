@@ -21,7 +21,6 @@ public class Lab11ClientApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		// 1. GET all cities
 		ResponseEntity<City[]> response = restTemplate.getForEntity(BASE_URL, City[].class);
 		City[] cities = response.getBody();
 		System.out.println("All cities:");
@@ -29,12 +28,10 @@ public class Lab11ClientApplication implements CommandLineRunner {
 			Arrays.stream(cities).forEach(System.out::println);
 		}
 
-		// 2. POST a new city
 		City newCity = new City(null, "Sample City", "Sample Country");
 		City createdCity = restTemplate.postForObject(BASE_URL, newCity, City.class);
 		System.out.println("Created city: " + createdCity);
 
-		// 3. PUT update city name
 		if (createdCity != null) {
 			createdCity.setName("Updated City Name");
 			HttpHeaders headers = new HttpHeaders();
@@ -56,8 +53,7 @@ public class Lab11ClientApplication implements CommandLineRunner {
 			System.out.println("Deleted city with id: " + createdCity.getId());
 		}
 	}
-
-	// City class to map JSON response/request
+	
 	public static class City {
 		private Integer id;
 		private String name;

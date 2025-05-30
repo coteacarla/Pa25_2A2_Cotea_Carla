@@ -4,6 +4,8 @@ package com.example.lab11.entities;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "countries")
@@ -29,6 +31,15 @@ public class Country implements Serializable {
     @ManyToOne
     @JoinColumn(name = "continent_id", referencedColumnName = "id", nullable = false)
     private Continent continent;
+
+    @ManyToMany
+    @JoinTable(
+            name = "country_neighbors",
+            joinColumns = @JoinColumn(name = "country_id"),
+            inverseJoinColumns = @JoinColumn(name = "neighbor_id")
+    )
+    private List<Country> neighbors = new ArrayList<>();
+
 
     // Constructors, Getters, Setters, and toString
 
@@ -72,6 +83,15 @@ public class Country implements Serializable {
     public void setContinent(Continent continent) {
         this.continent = continent;
     }
+
+    public List<Country> getNeighbors() {
+        return neighbors;
+    }
+
+    public void setNeighbors(List<Country> neighbors) {
+        this.neighbors = neighbors;
+    }
+
 
     @Override
     public String toString() {

@@ -30,14 +30,13 @@ public class CityController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<City> updateCityName(@PathVariable Integer id, @RequestBody City updatedCity) {
-        return cityRepository.findById(id)
-                .map(city -> {
-                    city.setName(updatedCity.getName());
-                    City savedCity = cityRepository.save(city);
-                    return new ResponseEntity<>(savedCity, HttpStatus.OK);
-                })
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<City> updateCity(@PathVariable Integer id, @RequestBody City updatedCity) {
+        return cityRepository.findById(id).map(city -> {
+            city.setName(updatedCity.getName());
+            city.setCountry(updatedCity.getCountry());
+            City saved = cityRepository.save(city);
+            return ResponseEntity.ok(saved);
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
