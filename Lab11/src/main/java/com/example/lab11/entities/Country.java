@@ -1,11 +1,11 @@
 package com.example.lab11.entities;
 
-
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "countries")
@@ -32,7 +32,7 @@ public class Country implements Serializable {
     @JoinColumn(name = "continent_id", referencedColumnName = "id", nullable = false)
     private Continent continent;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "country_neighbors",
             joinColumns = @JoinColumn(name = "country_id"),
@@ -40,8 +40,9 @@ public class Country implements Serializable {
     )
     private List<Country> neighbors = new ArrayList<>();
 
+    @ManyToMany(mappedBy = "neighbors", fetch = FetchType.EAGER)
+    private List<Country> inverseNeighbors = new ArrayList<>();
 
-    // Constructors, Getters, Setters, and toString
 
     public Country() {
     }
@@ -92,6 +93,19 @@ public class Country implements Serializable {
         this.neighbors = neighbors;
     }
 
+    public List<Country> getInverseNeighbors() {
+        return inverseNeighbors;
+    }
+
+    public void setInverseNeighbors(List<Country> inverseNeighbors) {
+        this.inverseNeighbors = inverseNeighbors;
+    }
+
+    public Set<Country> getAllNeighbors() {
+        Set<Country> all = new HashSet<>(neighbors);
+        all.addAll(inverseNeighbors);
+        return all;
+    }
 
     @Override
     public String toString() {

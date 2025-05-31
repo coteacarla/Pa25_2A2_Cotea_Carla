@@ -5,12 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="30ff08c8-9b94-414a-befc-0d0221e69ab1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/lab11/controllers/CountryColoringController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/lab11/services/CountryColoringService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/lab11/controllers/AuthController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/lab11/security/JwtFilter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/lab11/security/JwtUtil.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/lab11/security/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/lab11/controllers/CityController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/lab11/controllers/CityController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/lab11/entities/Country.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/lab11/entities/Country.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lab11Client/src/main/java/org/example/lab11client/Lab11ClientApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/../lab11Client/src/main/java/org/example/lab11client/Lab11ClientApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,10 +40,10 @@
     &quot;accountId&quot;: &quot;a013411b-ee8c-4019-a290-537b8054fc40&quot;
   }
 }</component>
-  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -114,7 +114,8 @@
       <workItem from="1748359248338" duration="1666000" />
       <workItem from="1748364282637" duration="4831000" />
       <workItem from="1748408775884" duration="2351000" />
-      <workItem from="1748622148807" duration="3698000" />
+      <workItem from="1748622148807" duration="7949000" />
+      <workItem from="1748676437307" duration="937000" />
     </task>
     <servers />
   </component>

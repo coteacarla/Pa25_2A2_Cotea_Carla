@@ -17,17 +17,25 @@ public class CountryColoringService {
     public Map<String, Integer> assignColors() {
         List<Country> countries = countryRepository.findAll();
 
-        countries.sort((a, b) -> Integer.compare(b.getNeighbors().size(), a.getNeighbors().size()));
+        // Sort countries by number of total neighbors (including inverse)
+        countries.sort((a, b) -> Integer.compare(
+                b.getAllNeighbors().size(),
+                a.getAllNeighbors().size()
+        ));
 
         Map<Country, Integer> colorMap = new HashMap<>();
 
         for (Country country : countries) {
             Set<Integer> usedColors = new HashSet<>();
-            for (Country neighbor : country.getNeighbors()) {
+
+            // Use both direct and inverse neighbors
+            for (Country neighbor : country.getAllNeighbors()) {
                 if (colorMap.containsKey(neighbor)) {
                     usedColors.add(colorMap.get(neighbor));
                 }
             }
+
+            // Assign the lowest unused color
             int color = 1;
             while (usedColors.contains(color)) {
                 color++;
@@ -35,9 +43,10 @@ public class CountryColoringService {
             colorMap.put(country, color);
         }
 
+
         Map<String, Integer> result = new LinkedHashMap<>();
-        for (Map.Entry<Country, Integer> entry : colorMap.entrySet()) {
-            result.put(entry.getKey().getName(), entry.getValue());
+        for (Country country : countries) {
+            result.put(country.getName(), colorMap.get(country));
         }
 
         return result;
