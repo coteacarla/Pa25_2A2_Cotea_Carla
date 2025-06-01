@@ -5,12 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="30ff08c8-9b94-414a-befc-0d0221e69ab1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/lab11/controllers/AuthController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/lab11/security/JwtFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/lab11/security/JwtUtil.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/lab11/security/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,7 +110,8 @@
       <workItem from="1748364282637" duration="4831000" />
       <workItem from="1748408775884" duration="2351000" />
       <workItem from="1748622148807" duration="7949000" />
-      <workItem from="1748676437307" duration="937000" />
+      <workItem from="1748676437307" duration="3535000" />
+      <workItem from="1748766663949" duration="28000" />
     </task>
     <servers />
   </component>
