@@ -15,9 +15,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
-    private final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hour
+    private final long EXPIRATION_TIME = 1000 * 60 * 60;
 
-    // Must be at least 256 bits (32 bytes) for HS256
     private final String SECRET_KEY = "mySecretKey123456mySecretKey123456";
 
     private Key getSigningKey() {

@@ -41,7 +41,6 @@ public class JwtFilter extends OncePerRequestFilter {
             if (jwtUtil.validateToken(token)) {
                 username = jwtUtil.extractUsername(token);
 
-                // Extract claims to get roles
                 Claims claims = jwtUtil.extractAllClaims(token);
 
                 List<String> roles = claims.get("roles", List.class);

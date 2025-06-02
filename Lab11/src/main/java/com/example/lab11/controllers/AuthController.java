@@ -17,7 +17,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody Map<String, String> request) {
-        // In a real app, you'd validate credentials from DB or another source
         String username = request.get("username");
         String password = request.get("password");
         if ("admin".equals(username) && "password".equals(password)) {
