@@ -1,9 +1,11 @@
 package com.example.lab11.entities;
 
-
 import jakarta.persistence.*;
-
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "countries")
@@ -30,7 +32,17 @@ public class Country implements Serializable {
     @JoinColumn(name = "continent_id", referencedColumnName = "id", nullable = false)
     private Continent continent;
 
-    // Constructors, Getters, Setters, and toString
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "country_neighbors",
+            joinColumns = @JoinColumn(name = "country_id"),
+            inverseJoinColumns = @JoinColumn(name = "neighbor_id")
+    )
+    private List<Country> neighbors = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "neighbors", fetch = FetchType.EAGER)
+    private List<Country> inverseNeighbors = new ArrayList<>();
+
 
     public Country() {
     }
@@ -71,6 +83,28 @@ public class Country implements Serializable {
 
     public void setContinent(Continent continent) {
         this.continent = continent;
+    }
+
+    public List<Country> getNeighbors() {
+        return neighbors;
+    }
+
+    public void setNeighbors(List<Country> neighbors) {
+        this.neighbors = neighbors;
+    }
+
+    public List<Country> getInverseNeighbors() {
+        return inverseNeighbors;
+    }
+
+    public void setInverseNeighbors(List<Country> inverseNeighbors) {
+        this.inverseNeighbors = inverseNeighbors;
+    }
+
+    public Set<Country> getAllNeighbors() {
+        Set<Country> all = new HashSet<>(neighbors);
+        all.addAll(inverseNeighbors);
+        return all;
     }
 
     @Override
