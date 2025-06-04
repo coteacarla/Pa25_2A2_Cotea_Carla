@@ -1,11 +1,15 @@
 package org.example;
 
 import java.io.*;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.lang.reflect.Type;
 import java.net.*;
+import java.nio.file.*;
 import java.util.*;
 import java.util.jar.*;
-import java.nio.file.*;
+import javax.tools.*;
+import org.objectweb.asm.*;
 
 public class ReflectionTester {
 
@@ -15,7 +19,7 @@ public class ReflectionTester {
 
     public static void main(String[] args) throws Exception {
         if (args.length != 1) {
-            System.out.println("Usage: java ReflectionTester <path-to-class|dir|jar>");
+            System.out.println("Usage: java ReflectionTester <path-to-java|class|jar>");
             return;
         }
 
@@ -30,31 +34,34 @@ public class ReflectionTester {
                 System.out.println("Analyzing JAR file...");
                 analyzeJar(input);
                 return;
+            } else if (input.getName().endsWith(".java")) {
+                compileJavaFile(input);
+                File classFile = new File(input.getParentFile(), input.getName().replace(".java", ".class"));
+                if (classFile.exists()) {
+                    classFiles.add(classFile);
+                    input = input.getParentFile();
+                }
             } else if (input.getName().endsWith(".class")) {
-                System.out.println("Adding class file: " + input.getName());
                 classFiles.add(input);
             }
         } else if (input.isDirectory()) {
             System.out.println("Scanning directory for class files...");
             Files.walk(input.toPath())
                     .filter(path -> path.toString().endsWith(".class"))
-                    .forEach(path -> {
-                        System.out.println("Found class file: " + path);
-                        classFiles.add(path.toFile());
-                    });
+                    .forEach(path -> classFiles.add(path.toFile()));
         }
 
         URL[] urls = {input.toURI().toURL()};
         URLClassLoader classLoader = new URLClassLoader(urls);
 
         for (File classFile : classFiles) {
-            System.out.println("Processing file: " + classFile.getAbsolutePath());
             String className = getClassNameFromFile(input, classFile);
-            System.out.println("Resolved class name: " + className);
+            System.out.println("Processing class: " + className);
             if (className != null) {
                 try {
-                    System.out.println("Loading class: " + className);
-                    Class<?> clazz = classLoader.loadClass(className);
+                    byte[] originalBytes = Files.readAllBytes(classFile.toPath());
+                    byte[] instrumentedBytes = instrumentClass(originalBytes, className.replace('.', '/'));
+                    Class<?> clazz = defineInstrumentedClass(instrumentedBytes, className);
                     printClassPrototype(clazz);
                     runTests(clazz);
                 } catch (Throwable e) {
@@ -66,7 +73,17 @@ public class ReflectionTester {
         printStats();
     }
 
-    private static void analyzeJar(File jarFile) throws IOException, ClassNotFoundException {
+    private static void compileJavaFile(File javaFile) throws IOException {
+        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        if (compiler == null) {
+            throw new IllegalStateException("Java compiler not available. Run with a JDK, not a JRE.");
+        }
+        System.out.println("Compiling Java file: " + javaFile.getName());
+        int result = compiler.run(null, null, null, javaFile.getAbsolutePath());
+        if (result != 0) throw new IOException("Compilation failed for: " + javaFile.getName());
+    }
+
+    private static void analyzeJar(File jarFile) throws IOException {
         URL jarURL = jarFile.toURI().toURL();
         URLClassLoader classLoader = new URLClassLoader(new URL[]{jarURL});
         try (JarFile jar = new JarFile(jarFile)) {
@@ -75,9 +92,10 @@ public class ReflectionTester {
                 JarEntry e = entries.nextElement();
                 if (e.getName().endsWith(".class")) {
                     String className = e.getName().replace("/", ".").replace(".class", "");
-                    try {
-                        System.out.println("Loading class from JAR: " + className);
-                        Class<?> clazz = classLoader.loadClass(className);
+                    try (InputStream is = jar.getInputStream(e)) {
+                        byte[] originalBytes = is.readAllBytes();
+                        byte[] instrumentedBytes = instrumentClass(originalBytes, className.replace('.', '/'));
+                        Class<?> clazz = defineInstrumentedClass(instrumentedBytes, className);
                         printClassPrototype(clazz);
                         runTests(clazz);
                     } catch (Throwable ex) {
@@ -87,33 +105,52 @@ public class ReflectionTester {
             }
         }
     }
+
+    private static byte[] instrumentClass(byte[] originalClass, String internalName) {
+        ClassReader reader = new ClassReader(originalClass);
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        ClassVisitor visitor = new ClassVisitor(Opcodes.ASM9, writer) {
+            @Override
+            public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
+                MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
+                return new MethodVisitor(Opcodes.ASM9, mv) {
+                    @Override
+                    public void visitCode() {
+                        super.visitCode();
+                        mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+                        mv.visitLdcInsn(">> Entering method: " + name);
+                        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println",
+                                "(Ljava/lang/String;)V", false);
+                    }
+                };
+            }
+        };
+        reader.accept(visitor, 0);
+        return writer.toByteArray();
+    }
+
+    private static Class<?> defineInstrumentedClass(byte[] bytes, String className) {
+        return new ClassLoader() {
+            public Class<?> load() {
+                return defineClass(className, bytes, 0, bytes.length);
+            }
+        }.load();
+    }
+
     private static String getClassNameFromFile(File root, File classFile) {
         try {
-            // If root is a .class file, assume its root is 3 levels up (i.e., target/classes)
             if (root.isFile() && root.getName().endsWith(".class")) {
-                root = root.toPath()
-                        .getParent()     // myclass
-                        .getParent()     // classes
-                        .toFile();       // target/classes
+                root = root.toPath().getParent().getParent().toFile();
             }
-
             Path rootPath = root.toPath().toAbsolutePath();
             Path classPath = classFile.toPath().toAbsolutePath();
             Path relativePath = rootPath.relativize(classPath);
-
-            String className = relativePath.toString()
-                    .replace(File.separatorChar, '.')
-                    .replaceAll("\\.class$", "");
-
-            System.out.println("Resolved class name: " + className);
-            return className;
-
+            return relativePath.toString().replace(File.separatorChar, '.').replaceAll("\\.class$", "");
         } catch (Exception e) {
             System.err.println("Error resolving class name: " + e);
             return null;
         }
     }
-
 
     private static void printClassPrototype(Class<?> clazz) {
         System.out.println("====== Class: " + clazz.getName() + " ======");
@@ -153,23 +190,31 @@ public class ReflectionTester {
         }
 
         Object instance = null;
-        for (Method method : clazz.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(Test.class)) {
-                totalTests++;
-                try {
-                    if (!Modifier.isStatic(method.getModifiers())) {
-                        if (instance == null) instance = clazz.getDeclaredConstructor().newInstance();
+
+        try {
+            Class<?> testAnnotationClass = clazz.getClassLoader().loadClass("org.example.Test");
+
+            for (Method method : clazz.getDeclaredMethods()) {
+                if (method.isAnnotationPresent((Class<? extends Annotation>) testAnnotationClass)) {
+                    totalTests++;
+                    try {
+                        if (!Modifier.isStatic(method.getModifiers())) {
+                            if (instance == null) instance = clazz.getDeclaredConstructor().newInstance();
+                        }
+                        Object[] args = generateMockArgs(method.getParameterTypes());
+                        method.setAccessible(true);
+                        method.invoke(Modifier.isStatic(method.getModifiers()) ? null : instance, args);
+                        System.out.println("✔ Passed: " + method.getName());
+                        passedTests++;
+                    } catch (Throwable e) {
+                        System.out.println("✘ Failed: " + method.getName() + " - " + e.getCause());
+                        failedTests++;
                     }
-                    Object[] args = generateMockArgs(method.getParameterTypes());
-                    method.setAccessible(true);
-                    method.invoke(Modifier.isStatic(method.getModifiers()) ? null : instance, args);
-                    System.out.println("✔ Passed: " + method.getName());
-                    passedTests++;
-                } catch (Throwable e) {
-                    System.out.println("✘ Failed: " + method.getName() + " - " + e.getCause());
-                    failedTests++;
                 }
             }
+
+        } catch (ClassNotFoundException e) {
+            System.err.println("Test annotation class not found: " + e.getMessage());
         }
     }
 
@@ -183,7 +228,7 @@ public class ReflectionTester {
             else if (t == double.class || t == Double.class) args[i] = 3.14;
             else if (t == float.class || t == Float.class) args[i] = 1.0f;
             else if (t == long.class || t == Long.class) args[i] = 100L;
-            else args[i] = null;  // unsupported
+            else args[i] = null;
         }
         return args;
     }
@@ -194,4 +239,6 @@ public class ReflectionTester {
         System.out.println("Passed     : " + passedTests);
         System.out.println("Failed     : " + failedTests);
     }
+
+    public @interface Test {}
 }
